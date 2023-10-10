@@ -6,7 +6,7 @@ metadata:
 spec:
   project: mesh-infra
   source:
-    repoURL: https://github.com/c0c0n3/teadal.proto
+    repoURL: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node.git
     targetRevision: HEAD
     path: deployment/mesh-infra/app
   destination:
