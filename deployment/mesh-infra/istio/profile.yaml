@@ -94,6 +94,10 @@ spec:
               nodePort: 5432
               targetPort: 5432
               name: postgres
+            - port: 3810
+              nodePort: 3810
+              targetPort: 3810
+              name: kubeflow
             - port: 31400
               targetPort: 31400
               name: tcp

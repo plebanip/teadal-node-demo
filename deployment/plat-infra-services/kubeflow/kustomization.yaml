@@ -1,0 +1,46 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kubeflow
+
+resources:
+- https://github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=63ca91850a9f42a357f3417110a3011ddbf43290 # tag=2.0.1
+- https://github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-emissary?ref=63ca91850a9f42a357f3417110a3011ddbf43290 # tag=2.0.1
+
+configMapGenerator:
+- name: ml-pipeline-ui-configmap
+  behavior: replace
+  files:
+  - viewer-pod-template.json
+- name: workflow-controller-configmap
+  behavior: replace
+  files:
+  - config
+patches:
+- path: set-storage-class-name.yaml
+  target: 
+    kind: PersistentVolumeClaim
+    name: mysql-pv-claim
+- path: set-minio-pipelines-config.yaml
+  target: 
+    kind: ConfigMap
+    name: pipeline-install-config
+- path: set-minio-secret.yaml
+  target: 
+    kind: Secret
+    name: mlpipeline-minio-artifact
+- path: set-env-vars-ml-pipeline.yaml
+  target:
+    kind: Deployment
+    name: ml-pipeline
+- path: set-env-vars-ui-pipeline.yaml
+  target:
+    kind: Deployment
+    name: ml-pipeline-ui
+- path: set-env-vars-metadata.yaml
+  target: 
+    kind: ConfigMap
+    name: metadata-grpc-configmap
+- path: delete-embed-minio.yaml
+- path: delete-minio-pvc.yaml
+- path: delete-minio-svc.yaml

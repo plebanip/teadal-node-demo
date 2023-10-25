@@ -30,6 +30,8 @@ to access HTTP services. The Istio gateway uses a K8s node port to
 accept incoming traffic on port `80` and route it to the destination
 service inside the mesh. The Istio gateway also has a `5432` node port
 to let external clients interact with the Postgres DB inside the mesh.
+Additionally, the node port `3810` is configured on the Istio gateway 
+to route traffic to the kubeflow UI service.
 Finally admins will want to SSH into cluster nodes so port `22` should
 be open too as well as port `6443` which is the K8s API endpoint admin
 tools like `kubectl` should connect to.
@@ -52,14 +54,14 @@ over to distributed storage backed by local disks on each node. (We
 set up DirectPV for that, but we could also use Longhorn or something
 else.)
 
-We'll create 4 PVs of 5GB each. Ideally they should be backed by
+We'll create 4 PVs of 5GB each and 1 PV of 20GB. Ideally they should be backed by
 disk partitions, but we'll cheat a bit and create dirs straight into
 the `/mnt` directory. (For the record, here's the proper way of
 doing [this sort of thing][proper-ls].) Anyhoo, let's go on with
 creating the dirs. SSH into the target node, then
 
 ```bash
-$ sudo mkdir -p /data/d{1..4}
+$ sudo mkdir -p /data/d{1..5}
 $ sudo chmod -R 777 /data
 ```
 

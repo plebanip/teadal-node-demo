@@ -1,0 +1,13 @@
+- op: remove
+  path: /spec/template/spec/containers/0/env/1/valueFrom
+- op: add
+  path: /spec/template/spec/containers/0/env/5
+  value:
+    name: MINIO_HOST
+    value: minio.minio-operator.svc.cluster.local
+- op: add
+  path: /spec/template/spec/containers/0/env/6
+  value:
+    name: MINIO_PORT
+    value: '80'
+

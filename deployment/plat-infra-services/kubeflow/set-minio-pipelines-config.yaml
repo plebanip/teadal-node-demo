@@ -1,0 +1,6 @@
+- op: add
+  path: /data/minioServiceHost
+  value: minio.minio-operator.svc.cluster.local
+- op: add
+  path: /data/minioServicePort
+  value: "80"  

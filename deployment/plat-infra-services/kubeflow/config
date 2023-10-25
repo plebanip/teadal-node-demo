@@ -1,0 +1,20 @@
+{
+artifactRepository:
+{
+    s3: {
+        bucket: mlpipeline,
+        endpoint: minio.minio-operator.svc.cluster.local:80,
+        insecure: true,
+        keyFormat: "v2/artifacts/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}",
+        accessKeySecret: {
+            name: mlpipeline-minio-artifact,
+            key: accesskey
+        },
+        secretKeySecret: {
+            name: mlpipeline-minio-artifact,
+            key: secretkey
+        }
+    },
+    archiveLogs: true
+}
+}

@@ -53,6 +53,13 @@ spec:
         port:
           number: 80
   - match:
+    - port: 3810
+    route:
+    - destination:
+        host: ml-pipeline-ui.kubeflow.svc.cluster.local
+        port:
+          number: 80
+  - match:
     - uri:
         prefix: /airflow/
     - uri:

@@ -1,0 +1,7 @@
+
+- op: add
+  path: /spec/template/spec/containers/0/env/12
+  value:  {"name":"OBJECTSTORECONFIG_HOST","valueFrom":{"configMapKeyRef":{"key":"minioServiceHost","name":"pipeline-install-config"}}}
+- op: add
+  path: /spec/template/spec/containers/0/env/13
+  value: {"name":"OBJECTSTORECONFIG_PORT","value":"80"}

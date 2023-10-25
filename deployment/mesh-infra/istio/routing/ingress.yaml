@@ -18,3 +18,9 @@ spec:
       name: postgres
       number: 5432
       protocol: TCP
+  - hosts:
+    - "*"
+    port:
+      name: kubeflow
+      number: 3810
+      protocol: HTTP

@@ -1,0 +1,12 @@
+- op: add
+  path: /data/MINIO_SERVICE_SERVICE_HOST
+  value: minio.minio-operator.svc.cluster.local
+- op: add
+  path: /data/MINIO_SERVICE_SERVICE_PORT
+  value: '80'
+- op: add
+  path: /data/ML_PIPELINE_SERVICE_HOST
+  value: ml-pipeline.kubeflow.svc.cluster.local
+- op: add
+  path: /data/ML_PIPELINE_SERVICE_PORT_GRPC
+  value: '8887'
