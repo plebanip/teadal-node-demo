@@ -127,7 +127,46 @@ there's no firewall. In a public cloud scenario, e.g. AWS, you
 typically have an admin console that lets you easily make ports
 available to clients out in the interwebs.
 
-### Install the mesh
+### Setup the mesh
 
 First of all made $dir$/deployment/ your current dir
+
+#### K8s storage
+
+We'll start off with local storage for now since we've only got one
+node in the cluster. Later on, when we add more nodes, we'll switch
+over to distributed storage backed by local disks on each node. (We
+set up DirectPV for that, but we could also use Longhorn or something
+else.)
+
+We'll create 4 PVs of 5GB each and 1 PV of 20GB. Ideally they should be backed by
+disk partitions, but we'll cheat a bit and create dirs straight into
+the `/mnt` directory. (For the record, here's the proper way of
+doing [this sort of thing][proper-ls].) Anyhoo, let's go on with
+creating the dirs. SSH into the target node, then
+
+```bash
+$ sudo mkdir -p /data/d{1..5}
+$ sudo chmod -R 777 /data
+```
+
+Now get back to your Teadal repo on your local machine and run
+
+```bash
+$ kustomize build mesh-infra/storage/pv/local/devm/ | kubectl apply -f -
+```
+
+
+#### K8s secrets
+
+```bash
+$ kubectl apply -f mesh-infra/argocd/namespace.yaml
+```
+
+Edit the K8s Secret templates in `mesh-infra/security/secrets` to
+enter the passwords you'd like to use. Then install them in the cluster
+
+```bash
+$ kustomize build mesh-infra/security/secrets | kubectl apply -f -
+```
 
