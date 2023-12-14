@@ -100,6 +100,12 @@ server: https://192.168.64.28:16443
 > export KUBECONFIG=/path/to/your/copy/of/client.config.  
 > ```
 
+Check the status of k8s
+```
+kubectl get pod -A
+```
+
+
 ### Install the mesh
 
 First of all made $dir$/deployment/ your current dir
