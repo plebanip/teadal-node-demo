@@ -106,7 +106,7 @@ kubectl get pod -A
 ```
 Something like this should appear
 
-![screenshot](./images/microk8s-1.png "screenshot)
+![screenshot](./images/microk8s-1.png)
 
 ### Setup the network
 
