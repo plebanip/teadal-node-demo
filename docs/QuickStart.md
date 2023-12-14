@@ -164,7 +164,10 @@ kubectl apply -f mesh-infra/argocd/namespace.yaml
 ```
 
 Edit the K8s Secret templates in `mesh-infra/security/secrets` to
-enter the passwords you'd like to use. Then install them in the cluster
+enter the passwords you'd like to use. 
+* For ArgoCD, you can patch afterwards: https://github.com/argoproj/argo-cd/blob/master/docs/faq.md
+
+Then install them in the cluster.
 
 ```bash
 kustomize build mesh-infra/security/secrets | kubectl apply -f -
