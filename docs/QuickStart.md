@@ -146,27 +146,48 @@ doing [this sort of thing][proper-ls].) Anyhoo, let's go on with
 creating the dirs. SSH into the target node, then
 
 ```bash
-$ sudo mkdir -p /data/d{1..5}
-$ sudo chmod -R 777 /data
+sudo mkdir -p /data/d{1..5}
+sudo chmod -R 777 /data
 ```
 
 Now get back to your Teadal repo on your local machine and run
 
 ```bash
-$ kustomize build mesh-infra/storage/pv/local/devm/ | kubectl apply -f -
+kustomize build mesh-infra/storage/pv/local/devm/ | kubectl apply -f -
 ```
 
 
 #### K8s secrets
 
 ```bash
-$ kubectl apply -f mesh-infra/argocd/namespace.yaml
+kubectl apply -f mesh-infra/argocd/namespace.yaml
 ```
 
 Edit the K8s Secret templates in `mesh-infra/security/secrets` to
 enter the passwords you'd like to use. Then install them in the cluster
 
 ```bash
-$ kustomize build mesh-infra/security/secrets | kubectl apply -f -
+kustomize build mesh-infra/security/secrets | kubectl apply -f -
 ```
+
+#### Istio
+
+Deploy Istio to the cluster using our own profile
+
+```bash
+istioctl install -y --verify -f mesh-infra/istio/profile.yaml
+```
+
+For now platform infra services (e.g. DBs) as well as app services
+(e.g. file transfer UI) sit in K8s' `default` namespace, so tell Istio
+to auto-magically add an Envoy sidecar to each service deployed to
+that namespace
+
+```bash
+kubectl label namespace default istio-injection=enabled
+```
+
+Notice that you can actually be selective about which services get
+an Envoy sidecar, but for now we'll just apply a blanket policy to
+keep things simple.
 
