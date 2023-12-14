@@ -104,7 +104,28 @@ Check the status of k8s
 ```
 kubectl get pod -A
 ```
+### Setup the network
 
+The mesh we're going to roll out needs to be connected to some ports
+on the external network. Clients on the external network hit port `80`
+to access HTTP services. The Istio gateway uses a K8s node port to
+accept incoming traffic on port `80` and route it to the destination
+service inside the mesh. The Istio gateway also has a `5432` node port
+to let external clients interact with the Postgres DB inside the mesh.
+Additionally, the node port `3810` is configured on the Istio gateway 
+to route traffic to the kubeflow UI service.
+Finally admins will want to SSH into cluster nodes so port `22` should
+be open too as well as port `6443` which is the K8s API endpoint admin
+tools like `kubectl` should connect to.
+
+How you actually make these ports available to processes running
+outside the mesh really depends on your setup. In the most trivial
+case where your cluster is made up by a single node and that node
+is directly connected to the Internet, all you need to do is open
+those ports in the firewall, if you have a one, or do nothing if
+there's no firewall. In a public cloud scenario, e.g. AWS, you
+typically have an admin console that lets you easily make ports
+available to clients out in the interwebs.
 
 ### Install the mesh
 
