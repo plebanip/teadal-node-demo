@@ -230,9 +230,9 @@ Go for coffee.
 `admin` and randomly generated password on the first deployment. To
 grab that password, run
 
-```bash
-kubectl -n argocd get secret argocd-initial-admin-secret \
-        -o jsonpath="{.data.password}" | base64 -d && echo
+##### to verify 
+```bash 
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
 You can use it if you get in trouble during the bootstrap procedure,
