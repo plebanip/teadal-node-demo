@@ -26,7 +26,7 @@ spec:
         valueFiles: 
         - $baselineroot/deployment/plat-infra-services/airflow/official/helm-values.yaml # fetches our own values-file from cloud-baseline repo (1)
     - repoURL: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node.git # (2)
-      targetRevision: airflow-local-storage
+      targetRevision: HEAD
       ref: baselineroot
   destination:
     server: "https://kubernetes.default.svc"

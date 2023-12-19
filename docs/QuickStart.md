@@ -139,7 +139,7 @@ First of all made $dir$/deployment/ your current dir
 
 #### K8s storage
 
-We'll start off with local storage for now since we've only got one
+We'll start off with microk8s `hostpath-storage` for now since we've only got one
 node in the cluster. Later on, when we add more nodes, we'll switch
 over to distributed storage backed by local disks on each node. (We
 set up DirectPV for that, but we could also use Longhorn or something
@@ -153,11 +153,10 @@ else.)
 [comment]: # (sudo chmod -R 777 /data)
 [comment]: # (```)
 
-Now get back to your Teadal repo on your local machine and run
-
-```bash
-kustomize build mesh-infra/storage/pv/local/tv-teadal/ | kubectl apply -f -
-```
+Make sure the `hostpath-storage` addon is enabled on microk8s.
+If every PersistentVolumeClaim has it's StorageClass field set to `microk8s-hostpath`,
+the microk8s addon will helpfully provision all PersistentVolumes necessary, so 
+no further action is necessary here.
 
 
 #### K8s secrets
