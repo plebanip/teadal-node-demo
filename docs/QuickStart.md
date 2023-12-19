@@ -14,7 +14,6 @@ clone the repo
 ```
 git clone https://gitlab.teadal.ubiwhere.com/teadal-pilots/<name of pilot>/<name of pilot>.git
 ```
-
 run the nix shell under the just cloned repo
 ```
 cd <clonerepo dir>/nix
@@ -49,6 +48,12 @@ and then wait until MicroK8s is up and running
 microk8s status --wait-ready
 ```
 
+If your VM has slow I/O Disk (like in case of POLIMI testbed), it is suggested to remove also the high availability adds-on. To do it, the following command is required
+
+```
+microk8s disable ha-cluster --force
+```
+
 Finally bolt on DNS and local storage
 
 ```
@@ -56,7 +61,7 @@ microk8s enable dns
 microk8s enable hostpath-storage
 ```
 
-Wait until all the above extras show in the "enabled" list
+Wait until all the above extras show in the "enabled" list and the removed ha-cluster is in the "disabled" list
 
 ```
 microk8s status
@@ -77,12 +82,6 @@ Then restart microk8s
 microk8s stop
 microk8s start
 ```
-
-
-> Notes
-> * Istio. Don't install Istio as a MicroK8s add-on, since MicroK8s will > install an old version!
-> * Storage. MicroK8s comes with its own storage provider (microk8s.io/>hostpath) which the storage add-on enables as well as creating a default K8s storage class called microk8s-hostpath.
-
 
 Set up the KUBECONFIG variable to make kubectl accessible
 ```
@@ -153,10 +152,15 @@ else.)
 [comment]: # (sudo chmod -R 777 /data)
 [comment]: # (```)
 
-Make sure the `hostpath-storage` addon is enabled on microk8s.
+Make sure the `hostpath-storage` addon is enabled on microk8s by checking the presence of this add-on the in the 'enabled' list
+
+```
+microk8s status
+```
+
 If every PersistentVolumeClaim has it's StorageClass field set to `microk8s-hostpath`,
 the microk8s addon will helpfully provision all PersistentVolumes necessary, so 
-no further action is necessary here.
+no further action is necessary here. By default, the code should be already configured to be compliant with this approach.
 
 
 #### K8s secrets
@@ -176,6 +180,8 @@ kustomize build mesh-infra/security/secrets | kubectl apply -f -
 ```
 
 #### Istio
+
+Don't install Istio as a MicroK8s add-on, since MicroK8s will install an old version! For this reason, it is required to follow the following procedure
 
 Deploy Istio to the cluster using our own profile
 
@@ -223,7 +229,7 @@ kustomize build mesh-infra/argocd | kubectl apply -f -
 After deploying itself to the cluster, Argo CD will populate it with
 all the K8s resources we declared in our repo and so slowly the Teadal
 platform instance will come into its own. This will take some time.
-Go for coffee.
+Go for coffee (actually also for lunch or dinner as it could take more than 1 hour).
 
 > Note
 >* Argo CD project errors. If you see a message like the one below in
@@ -231,11 +237,10 @@ Go for coffee.
   about it.
 >> unable to recognize "STDIN": no matches for kind "AppProject" in version "argoproj.io/v1alpha1"
 
->Notice that Argo CD creates an initial secret with an admin user of
+Notice that Argo CD creates an initial secret with an admin user of
 `admin` and randomly generated password on the first deployment. To
 grab that password, run
 
-##### to verify 
 ```bash 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
@@ -249,8 +254,27 @@ CD with the password you entered in our secret. To do that, just
 kubectl -n argocd delete secret argocd-initial-admin-secret
 ```
 
+if this secret is not returned, it is needed to generate a new admin password and configure the node with this new password. To generate the password
+
+```
+argocd account bcrypt --password <YOUR-PASSWORD-HERE>
+```
+
+Copy the generate password and attach it to the following command
+
+```
+# bcrypt(password)=$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa
+kubectl -n argocd patch secret argocd-secret \
+  -p '{"stringData": {
+    "admin.password": "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa",
+    "admin.passwordMtime": "'$(date +%FT%T%Z)'"
+  }}'
+```
+
 Again, check to see if argocs is deployed in k8s as well
 ```
 kubectl get pod -A
 ```
+
+After sometime this command returns the complete set of pods up and running. Good news! Your node is working!!!
 
