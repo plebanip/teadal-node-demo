@@ -47,7 +47,7 @@ spec:
         resources:
           requests:
             storage: 1Gi
-        storageClassName: local-storage
+        storageClassName: microk8s-hostpath
       status: {}
     volumesPerServer: 1
   requestAutoCert: false
