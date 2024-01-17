@@ -5,3 +5,5 @@ resources:
 - mesh-infra
 - plat-app-services
 - plat-infra-services
+- fdps
+- sfdps
