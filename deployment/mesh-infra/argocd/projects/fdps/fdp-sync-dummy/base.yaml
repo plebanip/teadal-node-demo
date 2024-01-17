@@ -28,8 +28,8 @@ spec:
         configMap:
           name: dummydata
           items:
-            - key: patients.json
-              path: patients.json
+            - key: patients-fdp.json
+              path: patients-fdp.json
       containers:
       - name: mc
         image: minio/mc:RELEASE.2023-06-23T18-12-07Z
@@ -48,7 +48,7 @@ spec:
           - name: data
             mountPath: /tmp/patients-fdp.json
             subPath: patients-fdp.json
-        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb rawdata/teadal && mc --insecure cp /tmp/patients.json rawdata/teadal/patients.json"]
+        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb rawdata/teadal && mc --insecure cp /tmp/patients-fdp.json rawdata/teadal/patients-fdp.json"]
       restartPolicy: Never
 ---
 apiVersion: apps/v1

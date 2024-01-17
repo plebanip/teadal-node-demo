@@ -48,7 +48,7 @@ spec:
           - name: data
             mountPath: /tmp/patients-sfdp.json
             subPath: patients-sfdp.json
-        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb rawdata/teadal && mc --insecure cp /tmp/patients.json rawdata/teadal/patients.json"]
+        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb rawdata/teadal && mc --insecure cp /tmp/patients-sfdp.json rawdata/teadal/patients-sfdp.json"]
       restartPolicy: Never
 ---
 apiVersion: apps/v1
