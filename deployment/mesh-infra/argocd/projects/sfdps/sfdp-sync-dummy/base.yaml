@@ -17,7 +17,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: add-files-to-minio
+  name: add-files-to-minio-sfdp
   namespace: minio-operator
 spec:
   ttlSecondsAfterFinished: 100
