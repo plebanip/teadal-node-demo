@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: fdp-services
-  namespace: argocd
+  namespace: default
   # Make sure the project can only be deleted if no app references it.
   finalizers:
     - resources-finalizer.argocd.argoproj.io
