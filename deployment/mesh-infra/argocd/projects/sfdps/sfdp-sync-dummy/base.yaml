@@ -116,7 +116,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dummydata
+  name: dummydata-sfdp
   namespace: minio-operator
 data:
   patients-sfdp.json: |-

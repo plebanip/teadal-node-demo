@@ -26,7 +26,7 @@ spec:
       volumes:
       - name: data
         configMap:
-          name: dummydata
+          name: dummydata-fdp
           items:
             - key: patients-fdp.json
               path: patients-fdp.json
