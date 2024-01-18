@@ -5,7 +5,7 @@
 # it from a local disk.
 #
 
-package fdp-sync-dummy.rbacdb
+package sfdpsyncdummy.rbacdb
 
 import data.authnz.http as http
 
@@ -21,13 +21,13 @@ role_to_perms := {
     product_owner: [
         {
             "methods": http.do_anything,
-            "url_regex": "^/fdp-sync-dummy/.*"
+            "url_regex": "^/sfdp-sync-dummy/.*"
         }
     ],
     product_consumer: [
         {
             "methods": http.read,
-            "url_regex": "^/fdp-sync-dummy/patients/age"
+            "url_regex": "^/sfdp-sync-dummy/patients/age"
         }
     ]
 }

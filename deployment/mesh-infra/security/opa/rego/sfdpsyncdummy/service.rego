@@ -2,12 +2,12 @@
 # Example policy for the sync dummy sFDP.
 #
 
-package sfdp-sync-dummy.service
+package sfdpsyncdummy.service
 
 import input.attributes.request.http as http_request
 import data.authnz.envopa as envopa
 import data.config.oidc as oidc_config
-import data.sfdp-sync-dummy.rbacdb as rbac_db
+import data.sfdpsyncdummy.rbacdb as rbac_db
 
 
 default allow := false
