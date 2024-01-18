@@ -10,7 +10,8 @@
 #
 package teadal
 
-import data.fdpdummy.service as fdpdummy
+import data.fdp-sync-dummy.service as fdp-sync-dummy
+import data.sfdp-sync-dummy.service as sfdp-sync-dummy
 import data.httpbin.service as httpbin
 import data.minio.service as minio
 
@@ -18,7 +19,13 @@ import data.minio.service as minio
 default allow := false
 
 allow {
-    fdpdummy.allow
+    fdp-sync-dummy
+}
+
+# or
+
+allow {
+    sfdp-sync-dummy
 }
 
 # or
