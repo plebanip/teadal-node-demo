@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: plat-app-services
+  name: pilot-services
   namespace: argocd
   # Make sure the project can only be deleted if no app references it.
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  description: Teadal platform application services now used mainly for test. For real FDPs and SFPDs refer to the pilot-services
+  description: Teadal pilot-services (e.g., FDPs and SFDPs)
   # Allow manifests to deploy from any Git repos.
   sourceRepos:
   - '*'
