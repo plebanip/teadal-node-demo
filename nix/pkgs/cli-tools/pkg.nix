@@ -13,8 +13,7 @@
 
   kubectl-directpv, kubectl-minio, minio-client,
   opa-envoy-plugin,
-
-  pvlocalgen, go
+  node-config, pvlocalgen, go
 }:
 
 rec {
@@ -59,6 +58,7 @@ rec {
     opa-envoy-plugin  # 0.53.1   (pkgs = nixos-23.05)
     qemu              # 8.0.0    (pkgs = nixos-23.05)
     nixos-rebuild
+    node-config
     pvlocalgen
     go                # 1.20.4   (pkgs = nixos-23.05)
   ] ++ node-cloud;
