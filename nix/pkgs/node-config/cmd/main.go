@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
+	"strings"
 	"syscall"
 	"time"
 
@@ -143,7 +144,16 @@ func PrepareArgoCd(ctx context.Context, client kubernetes.Interface) error {
 	if err != nil {
 		return err
 	}
-	token, err := askPassword("enter the argocd deployment token (generated on Gitlab)")
+	argoURL = strings.TrimSuffix(argoURL, "\n")
+
+	fmt.Print("Please enter the deployment token username (generated on Gitlab): ")
+	username, err := reader.ReadString('\n')
+	if err != nil {
+		return err
+	}
+	username = strings.TrimSuffix(username, "\n")
+
+	token, err := askPassword("Please enter the deployment token (generated on Gitlab): ")
 	if err != nil {
 		return err
 	}
@@ -155,7 +165,7 @@ func PrepareArgoCd(ctx context.Context, client kubernetes.Interface) error {
 	sec.StringData = map[string]string{
 		"type":     "git",
 		"url":      argoURL,
-		"username": "argocd",
+		"username": username,
 		"password": token,
 	}
 	sec.Labels = map[string]string{
