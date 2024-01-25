@@ -12,7 +12,9 @@
   qemu, nixos-rebuild, curl, jq,
 
   kubectl-directpv, kubectl-minio, minio-client,
-  opa-envoy-plugin
+  opa-envoy-plugin,
+
+  pvlocalgen, go
 }:
 
 rec {
@@ -57,6 +59,8 @@ rec {
     opa-envoy-plugin  # 0.53.1   (pkgs = nixos-23.05)
     qemu              # 8.0.0    (pkgs = nixos-23.05)
     nixos-rebuild
+    pvlocalgen
+    go                # 1.20.4   (pkgs = nixos-23.05)
   ] ++ node-cloud;
 
   # Bundle all the given programs in a single derivation.

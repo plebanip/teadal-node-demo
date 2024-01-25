@@ -32,15 +32,18 @@ let
     inherit opa-envoy-plugin;
   };
 
+  pvlocalgen = sysPkgs.callPackage ./pvlocalgen/pkg.nix { };
+
   tools = sysPkgs.callPackage ./cli-tools/pkg.nix {
-    inherit kubectl-directpv kubectl-minio opa-envoy-plugin;
+    inherit kubectl-directpv kubectl-minio opa-envoy-plugin pvlocalgen;
   };
 
 in rec {
   packages.${system} =
     tools.shared // (if isLinux then tools.linux else {}) //
     { inherit kubectl-directpv kubectl-minio
-              opa-envoy-plugin opa-envoy-plugin-img;
+              opa-envoy-plugin opa-envoy-plugin-img
+              pvlocalgen;
     };
   defaultPackage.${system} = tools.shared.cli-tools-dev-shell;
 }

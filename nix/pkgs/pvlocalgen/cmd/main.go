@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -16,13 +15,15 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
+
+	"sigs.k8s.io/yaml"
 )
 
 func printHelp() {
 	fmt.Printf("TEADAL LOCAL PV GENERATOR\n")
 	fmt.Printf("To use, pass a space-separated, list of tuples with your requirements\n")
 	fmt.Printf("For example, for 2 10GB PV and 1 20GB PV: \n")
-	fmt.Printf("pvlocalgen 2:10 1:20")
+	fmt.Printf("pvlocalgen 2:10 1:20\n")
 }
 
 func createPV(storage string, node_name string, volume_name string, path string) apiv1.PersistentVolume {
@@ -58,6 +59,23 @@ func createPV(storage string, node_name string, volume_name string, path string)
 		},
 	}
 }
+
+func writePV(index int, storage string, node_name string) error {
+	i_to_string := strconv.Itoa(index)
+	volume_name := node_name + "-" + i_to_string
+	path := "/data/d" + i_to_string
+	new_pv := createPV(storage, node_name, volume_name, path)
+
+	file_name := node_name+"/"+node_name+"-"+i_to_string+".yaml"
+	if new_pv_yaml, err := yaml.Marshal(new_pv); err != nil {
+		return err
+	} else {
+		return os.WriteFile(file_name, new_pv_yaml, 0644)
+	}
+}
+// NOTE. Getting rid of extra fields in the generated YAML.
+// See: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node/-/issues/15
+
 
 func main() {
 	if len(os.Args) <= 1 {
@@ -111,32 +129,17 @@ func main() {
 			panic(err.Error())
 		}
 
+		if _, err := os.Stat(node_name); os.IsNotExist(err) {
+			if err := os.Mkdir(node_name, os.ModePerm); err != nil {
+				panic(err.Error())
+			}
+		}
+
 		for i := 1; i <= nr_of_pvs; i++ {
-			i_to_string := strconv.Itoa(index)
-			volume_name := node_name + "-" + i_to_string
-			path := "/data/d" + i_to_string
-			new_pv := createPV(storage, node_name, volume_name, path)
-
-			new_pv_yaml, err := json.Marshal(new_pv)
-
-			if err != nil {
+			if err := writePV(index, storage, node_name); err != nil {
 				panic(err.Error())
 			}
-
-			if _, err := os.Stat(node_name); os.IsNotExist(err) {
-				if err := os.Mkdir(node_name, os.ModePerm); err != nil {
-					panic(err.Error())
-				}
-			}
-
-			err2 := os.WriteFile(node_name+"/"+node_name+"-"+i_to_string+".json", new_pv_yaml, 0777)
-
-			if err2 != nil {
-				panic(err.Error())
-			}
-
 			index++
-
 		}
 
 	}
