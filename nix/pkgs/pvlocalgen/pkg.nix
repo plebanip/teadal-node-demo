@@ -4,7 +4,7 @@
 }:
 buildGoApplication {                                          # NOTE (1)
   pname = "pvlocalgen";
-  version = "0.3.0";
+  version = "0.4.0";
   src = ./cmd;
   modules = ./gomod2nix.toml;
   nativeBuildInputs = [ gomod2nix ];                          # NOTE (2)

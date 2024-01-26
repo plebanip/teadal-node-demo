@@ -26,6 +26,12 @@ func printHelp() {
 	fmt.Printf("pvlocalgen 2:10 1:20\n")
 }
 
+type PVKustomize struct {
+	APIVersion string   `json:"apiVersion,omitempty"`
+	Kind       string   `json:"kind,omitempty"`
+	Resources  []string `json:"resources,omitempty"`
+}
+
 func createPV(storage string, node_name string, volume_name string, path string) apiv1.PersistentVolume {
 	return apiv1.PersistentVolume{
 		TypeMeta: v1.TypeMeta{
@@ -66,16 +72,45 @@ func writePV(index int, storage string, node_name string) error {
 	path := "/data/d" + i_to_string
 	new_pv := createPV(storage, node_name, volume_name, path)
 
-	file_name := node_name+"/"+node_name+"-"+i_to_string+".yaml"
+	file_name := node_name + "/" + node_name + "-" + i_to_string + ".yaml"
 	if new_pv_yaml, err := yaml.Marshal(new_pv); err != nil {
 		return err
 	} else {
 		return os.WriteFile(file_name, new_pv_yaml, 0644)
 	}
 }
+
+func writeKustomization(node_name string) error {
+	if _, err := os.Stat(node_name); os.IsNotExist(err) {
+		panic(err.Error())
+	}
+
+	files, _ := os.ReadDir(node_name)
+
+	var resources []string
+
+	for _, file := range files {
+		if strings.Contains(file.Name(), node_name) {
+			resources = append(resources, file.Name())
+		}
+	}
+
+	var kustomization PVKustomize = PVKustomize{}
+	kustomization.APIVersion = "kustomize.config.k8s.io/v1beta1"
+	kustomization.Kind = "Kustomization"
+	kustomization.Resources = resources
+	filename := node_name + "/" + "kustomization.yaml"
+
+	if new_kustomization_yaml, err := yaml.Marshal(kustomization); err != nil {
+		return err
+	} else {
+		return os.WriteFile(filename, new_kustomization_yaml, 0644)
+	}
+
+}
+
 // NOTE. Getting rid of extra fields in the generated YAML.
 // See: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node/-/issues/15
-
 
 func main() {
 	if len(os.Args) <= 1 {
@@ -141,6 +176,6 @@ func main() {
 			}
 			index++
 		}
-
 	}
+	writeKustomization(node_name)
 }
