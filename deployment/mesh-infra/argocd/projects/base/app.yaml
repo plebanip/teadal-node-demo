@@ -28,4 +28,3 @@ spec:
         duration: 5s     # base amount to back off
         factor: 2        # factor to multiply base after each failed retry
         maxDuration: 3m  # maximum time allowed for the backoff strategy
-
