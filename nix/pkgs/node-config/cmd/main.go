@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/term"
 	core "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -186,13 +185,7 @@ func PrepareArgoCd(ctx context.Context, client kubernetes.Interface) error {
 	currentTime := time.Now()
 	formattedTime := currentTime.UTC().Format("2006-01-02T15:04:05Z")
 	encodedTime := base64.StdEncoding.EncodeToString([]byte(formattedTime))
-
-	hashedStr, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	encodedPwd := base64.StdEncoding.EncodeToString(hashedStr)
+	encodedPwd := base64.StdEncoding.EncodeToString([]byte(pwd))
 
 	err = CreateOrUpdateSecret(ctx, client, "argocd", "argocd-secret", map[string]string{
 		"admin.password":      encodedPwd,
