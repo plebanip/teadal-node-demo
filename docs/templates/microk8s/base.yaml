@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: <NAME_OF_YOUR_FDP>
+  name: <NAME_OF_YOUR_FDP>
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: <NAME_OF_YOUR_FDP>
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: <NAME_OF_YOUR_FDP>
+  name: <NAME_OF_YOUR_FDP>
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <NAME_OF_YOUR_FDP>
+  template:
+    metadata:
+      labels:
+        app: <NAME_OF_YOUR_FDP>
+    spec:
+      containers:
+        - name: <NAME_OF_YOUR_FDP>
+          image: <NAME_OF_YOUR_IMAGE>
+          ports:
+          - containerPort: 8080
+          env: #  Not ideal to hardcode the minio credentials, but we can't mount secrets from a different namespace so ...
+          - name: MINIO_HOST
+            value: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local"
+          - name: MINIO_PORT
+            value: "9000"
+          - name: MINIO_ACCESS_KEY
+            value: LTXG5CVY0MXLE0WO75Q6
+          - name: MINIO_SECRET_KEY
+            value: IKxps9GTiPGBZaK6BRmeF434lGZCNx0XG3sa4PLE          
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: "<NAME_OF_YOUR_FDP>-virtual-service"
+spec:
+  gateways:
+  - "teadal-gateway"
+  hosts:
+  - "*"
+  http:
+  - match:
+    - uri:
+        prefix: /<NAME_OF_YOUR_FDP>/
+    - uri:
+        prefix: /<NAME_OF_YOUR_FDP>
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: <NAME_OF_YOUR_FDP>.default.svc.cluster.local
+        port:
+          number: 8080

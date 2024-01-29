@@ -1,0 +1,9 @@
+- op: replace
+  path: /metadata/name
+  value: <NAME_OF_YOUR_FDP>
+- op: replace
+  path: /spec/source/path
+  value: deployment/pilot-services/<NAME_OF_YOUR_FDP>
+- op: replace
+  path: /spec/project
+  value: pilot-services

@@ -4,5 +4,5 @@ kind: Kustomization
 resources:
 - project.yaml
 - httpbin
-- fdp-sync-dummy
-- sfdp-sync-dummy
+# - fdp-sync-dummy
+# - sfdp-sync-dummy

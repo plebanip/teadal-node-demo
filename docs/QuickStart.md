@@ -4,30 +4,26 @@ First off, you should install Nix and enable the Flakes extension.
 
 For that connect to the machine you want to install the Teadal node to and then follow the guide below. 
 
-```
+```bash
 sh <(curl -L https://nixos.org/nix/install) --daemon
 mkdir -p ~/.config/nix
 echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 ```
 
 clone the repo
-```
+```bash
 git clone https://gitlab.teadal.ubiwhere.com/teadal-pilots/<name of pilot>/<name of pilot>.git
 ```
-run the nix shell under the just cloned repo
+As shown in the output of the installation, to use nix is required to restart the shell. 
+Then run the nix shell under the just cloned repo
 
----- Reminders -----------------------------------------------------------------
-[ 1 ]
-Nix won't work in active shell sessions until you restart them.
-
-
-```
+```bash
 cd <clonerepo dir>/nix
 nix shell
 ```
 
 check if it worked by checking the ArgoCD version 
-```
+```bash
 argocd version --client --short
 ```
 it should return something like ``argocd: v2.7.6``
@@ -38,42 +34,42 @@ Now all the command must be executed inside the Nix shell
 
 We'll use MicroK8s as a cluster manager and orchestration. Install MicroK8s (upstream Kubernetes 1.27)
 
-```
+```bash
 sudo snap install microk8s --classic --channel=1.27/stable
 ```
 
 Add yourself to the MicroK8s group to avoid having to sudo every time your run a microk8s command
 
-```
+```bash
 sudo usermod -a -G microk8s $(whoami)
 newgrp microk8s
 ```
 
 and then wait until MicroK8s is up and running
-```
+```bash
 microk8s status --wait-ready
 ```
 
 If your VM has slow I/O Disk (like in case of POLIMI testbed), it is suggested to remove also the high availability adds-on. To do it, the following command is required
 
-```
+```bash
 microk8s disable ha-cluster --force
 ```
 
 Finally bolt on DNS
 
-```
+```bash
 microk8s enable dns
 ```
 
 Wait until all the above extras show in the "enabled" list and the removed ha-cluster is in the "disabled" list
 
-```
+```bash
 microk8s status
 ```
 
 Now we've got to broaden MicroK8s node port range. This is to make sure it'll be able to expose any K8s node port we're going to use.
-```
+```bash
 nano /var/snap/microk8s/current/args/kube-apiserver
 ```
 
@@ -83,16 +79,22 @@ and add this line somewhere in the file
 ```
 
 Then restart microk8s
-```
+```bash
 microk8s stop
 microk8s start
 ```
 
 Set up the KUBECONFIG variable to make kubectl accessible
-```
+```bash
 export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
 ```
-> Note to make the k8s accessible from outside of the VM
+
+Create the config file which will be used by some tools to generate secrets and storage
+```bash
+microk8s config > /home/ubuntu/.kube/config
+```
+
+<!-- > Note to make the k8s accessible from outside of the VM
 > Copy out the K8s admin creds
 > ```
 > cat /var/snap/microk8s/current/credentials/client.config
@@ -105,9 +107,9 @@ server: https://192.168.64.28:16443
 > ```
 > export KUBECONFIG=/path/to/your/copy/of/client.config.  
 > ```
-
+-->
 Check the status of k8s
-```
+```bash
 kubectl get pod -A
 ```
 Something like this should appear
@@ -139,15 +141,11 @@ available to clients out in the interwebs.
 
 ### Setup the mesh
 
-First of all made $dir$/deployment/ your current dir
+First of all made **`$dir$/deployment/`** your current dir
 
 #### K8s storage
 
-There are various ways to handle storage on a TEADAL node. If you want to 
-become familiar with some of them you may read [the storage notes](storage-notes.md).
-
-In this guide, we will describe how to set up local storage manually. For 
-single node solutions this is a easy way to quickly provide some storage for your pods.
+There are various ways to handle storage on a TEADAL node. In this guide, we will describe how to set up local storage manually. For single node solutions this is a easy way to quickly provide some storage for your pods.
 When adding more nodes, we may require different solutions (distributed storage), but lets not worry 
 about that now.
 
@@ -167,92 +165,41 @@ command:
 sudo chmod -R 777 /data
 ```
 
-After creating these directories and properly set permissions, it should be time
-to deploy the PVs on the cluster. 
-However, there is a parameter that should before applying the PV's. For example, in `mesh-infra/storage/pv/local/devm/devm-1.yaml`:
-
-```yaml
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - <NODE_NAME>
-```
-You need to set `<NODE_NAME>` to the name of the node that this storage belongs to.
-In a single node, microk8s deployment, this should be equal to your hostname, but that 
-is not always the case, so do check with the commands below:
+Now it is time to generate the .yaml files to setup the storage. To this aim, there is a tool developed named ``pvlocalgen`` that can be used and that has been included in the nix shell. This tool creates a folder named as <HOST_NAME> with the required files that must be moved to the proper location afterwards
 
 ```bash
-$ hostname
-devm  
-
-$ kubectl get nodes
-NAME   STATUS   ROLES    AGE    VERSION
-devm   Ready    <none>   167d   v1.27.8
+pvlocalgen 1:20 8:10
+mv <HOST_NAME> ../deployment/mesh-infra/storage/pv/local/
 ```
 
-Ideally you should create a folder similar to `mesh-infra/storage/pv/local/devm/` 
-or `mesh-infra/storage/pv/local/tv-teadal`, with the PV configurations for your machine.
-You may name the folder `<NODE_NAME>`, for example.
+Last step is to update the `mesh-infra/storage/pv/local/kustomization.yaml` file 
 
-If you do create a new folder, don't forget to change the 
-`kustomization.yaml` file on `/deployment/mesh-infra/storage/pv/local/` to point to this new directory:
+```bash 
+nano mesh-infra/storage/pv/local/kustomization.yaml
+```
+
+to point to this new directory (the other lines should be commented):
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- <NODE-NAME>
-#- devm
+- <HOST_NAME>
+# - devm
 # - tv-teadal
-
 ```
 
-Afterwards you can apply your changes with:
+Now it is time to apply your changes with:
 
 ```bash
-kustomize build mesh-infra/storage/pv/local/<NODE_NAME>/ | kubectl apply -f -
+kustomize build mesh-infra/storage/pv/local/ | kubectl apply -f -
 ```
 
 This should make the storage you created ready to be used by the pods you will 
 initialize in the next steps.
 
-[comment]: # (We'll create 4 PVs of 5GB each and 1 PV of 20GB. Ideally they should be backed by disk partitions, but we'll cheat a bit and create dirs straight into the `/mnt` directory. For the record, here's the proper way of doing [this sort of thing][proper-ls]. Anyhoo, let's go on with creating the dirs. SSH into the target node, then)
 
-[comment]: # (```bash)
-[comment]: # (sudo mkdir -p /data/d{1..5})
-[comment]: # (sudo chmod -R 777 /data)
-[comment]: # (```)
-
-[comment]: # (Make sure the `hostpath-storage` addon is enabled on microk8s by checking the presence of this add-on the in the 'enabled' list)
-
-[comment]: # (```)
-[comment]: # (microk8s status)
-[comment]: # (```)
-
-[comment]: # (If every PersistentVolumeClaim has it's StorageClass field set to `microk8s-hostpath`,)
-[comment]: # (the microk8s addon will helpfully provision all PersistentVolumes necessary, so)
-[comment]: # (no further action is necessary here. By default, the code should be already configured to be compliant with this approach.)
-
-
-#### K8s secrets
-
-```bash
-kubectl apply -f mesh-infra/argocd/namespace.yaml
-```
-
-Edit the K8s Secret templates in `mesh-infra/security/secrets` to
-enter the passwords you'd like to use. 
-
-Then install them in the cluster.
-
-```bash
-kustomize build mesh-infra/security/secrets | kubectl apply -f -
-```
 
 #### Istio
 
@@ -282,15 +229,11 @@ A final check to see if istio is deployed in k8s
 kubectl get pod -A
 ```
 
-#### Argo CD
+![screenshot](./images/microk8s-2.png)
 
-Argo CD is our declarative continuous delivery engine. Except for
-the things listed in this bootstrap procedure, we declare the cluster
-state with YAML files that we keep in the `deployment` dir within
-our GitHub repo. Argo CD takes care of reconciling the current cluster
-state with what we declared in the repo.
+#### ArgoCD connection
 
-To make this magic happens you have to inform configure ArgoCD about the repository to consider as source of information. You have to edit the app.yaml file
+To allow ArgoCD to be aligned with the gitlab repo you have to edit the app.yaml file
 
 ```bash
 nano mesh-infra/argocd/projects/base/app.yaml
@@ -310,9 +253,48 @@ spec:
     repoURL: <REPO_URL>
     targetRevision: HEAD
     path: deployment/mesh-infra/app
-
 ```
 
+<!--In addition, you have to generate a deploy token from the GitLab repository. To do so, on the GitLab web page of your repo, go to the screen *Setting>Repository>Deploy tokens*. The *Expand>Add token* and insert a new token like the one in the following figure. Tke note of the *username* and the *token* created.
+
+<!--N.B. For now it is not needed to generate the token. Use this one *gldt-FsyJDEno4jTfoCGi7Sy1*--
+
+Then copy the *username* and *token* values and insert the along with the <REPO_URL> in the `repo.yaml` file.
+
+Thus:
+
+```bash
+nano mesh-infra/security/secrets/repo.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: teadal.node-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: git
+  url: <REPO_URL>
+
+  # GitLab "Deploy token" to let Argc CD read repo data.
+  # See:
+  # - https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node/-/settings/repository
+  username: <USER_NAME_DEFINED_IN_TOKEN_GENERATION>
+  password: <DEPLOY_TOKEN_GENERATED_BY_GITLAB>
+```
+-->
+
+
+#### Argo CD deployment
+
+Argo CD is our declarative continuous delivery engine. Except for
+the things listed in this bootstrap procedure, we declare the cluster
+state with YAML files that we keep in the `deployment` dir within
+our GitHub repo. Argo CD takes care of reconciling the current cluster
+state with what we declared in the repo.
 
 For that to happen, we've got to deploy Argo CD and tell it to use
 the YAML in our repo to populate the cluster. Our repo also contains
@@ -330,13 +312,14 @@ all the K8s resources we declared in our repo and so slowly the Teadal
 platform instance will come into its own. This will take some time.
 Go for coffee (actually also for lunch or dinner as it could take more than 1 hour).
 
+
 > Note
 >* Argo CD project errors. If you see a message like the one below in
   the output, rerun the above command again — see [#42][boot.argo-app-issue]
   about it.
 >> unable to recognize "STDIN": no matches for kind "AppProject" in version "argoproj.io/v1alpha1"
 
-Notice that Argo CD creates an initial secret with an admin user of
+<!--Notice that Argo CD creates an initial secret with an admin user of
 `admin` and randomly generated password on the first deployment. To
 grab that password, run
 
@@ -369,13 +352,77 @@ kubectl -n argocd patch secret argocd-secret \
     "admin.passwordMtime": "'$(date +%FT%T%Z)'"
   }}'
 ```
+-->
 
 Again, check to see if argocs is deployed in k8s as well
-```
+```bash
 kubectl get pod -A
 ```
 
-After sometime this command returns the complete set of pods up and running. Good news! Your node is working!!!
+After sometime this command returns the basic set of pods up and running. 
+
+![screenshot](./images/microk8s-3.png)
+
+You can notice that two pods do not run properly. To make everything working, we need the last step, the configuration of the secrets also to allow ArgoCD to fecth the repo.
+
+#### K8s secrets
+
+<!--```bash
+kubectl apply -f mesh-infra/argocd/namespace.yaml
+```
+
+Edit the K8s Secret templates in `mesh-infra/security/secrets` to
+enter the passwords you'd like to use. For `keycloak-builtin-admin.yaml` and `postgres-users.yaml` the password can be set simply specifying the value. For `argocd.yaml` the values must be inserted in base64. Thus generate them using
+
+```bash
+echo -n '<thepasswordIwant>' | base64
+echo "'$(date +%FT%T%Z)'" | base64
+```
+then copy and paste the returned value in the `admin.password` and `admin.passwordMTime`
+
+When terminated, install the secrets in the cluster.-->
+
+To setup the secrets it is required to generate the passwords for *keycloak*, *postgres*, and *argocd*. 
+About the latter, it is required a step beforehand. You have to generate a deploy token from the GitLab repository. To do so, on the GitLab web page of your repo, go to the screen *Setting>Repository>Deploy tokens*. The *Expand>Add token* and insert a new token like the one in the following figure. Take note of the *username* and the *token* created.
+
+Now it is time to run a tool already integrated in the nix shell. Indicates firstly the password for postgres, then for keycloak. For argocd, it is required to indicate the username and the value of the token generated before.
+
+```bash
+node.config
+```
+
+A message informing that everything has been setup should appear
+
+![screenshot](./images/microk8s-4.png)
+
+
+After few minutes, ArgoCD starts fecthing the repo and deploying the required containers. Now, when executing 
+
+```bash
+kubectl get pod -A
+```
+
+the cluster returns a long set of pods 
+
+![screenshot](./images/microk8s-5.png)
+
+It takes a while (about 20 mins) but at the end everything should be in running status.
+
+> In case nothing changes, it could be beneficial to stop and start the cluster
+>
+>```bash
+>microk8s stop
+>microk8s start
+>```
+
+
+<!--when executing, the tool will ask to insert the passwords for these three tools. It is clear that you have to remember these values to access as admin to those applications. Anyway, the values (except for *argocd* that is stored in base64 format ) are visible in `keycloak-builtin-admin.yaml` and `postgres-users.yaml` files under `mesh-infra/security/secrets` folder. -->
+
+<!--Now it is time to configure microk8s with the just created secrets.
+
+```bash
+kustomize build mesh-infra/security/secrets | kubectl apply -f -
+```-->
 
 ### Checking the installation
 
@@ -396,7 +443,7 @@ three projects (mesh-infra, plat-infra-services, plat-app-services)
 to reflect the layout of the `deployment` dir in the Git repo.
 
 
-### Istio
+#### Istio
 
 Istio got configured with a few useful add-ons, HTTP and TCP routing,
 plus some settings to make it easier to intercept and debug raw network
@@ -442,7 +489,7 @@ Oh, truth be told, we also have SkyWalking. But that's not deployed
 yet because we still have some bugs to squash.
 
 
-### Storage
+#### Storage
 
 Three of the PVs should be bound. One for the Postgres DB, another
 for Keycloak's DB and the last one for the Teadal MinIO tenant.
@@ -472,7 +519,7 @@ You should get a fat `403` response. Access is denied without valid
 creds. How rude.
 
 
-### Security
+#### Security
 
 Keycloak is at http://localhost/keycloak, courtesy of Istio routing.
 Navigate to the admin console and log in with the username and password
@@ -578,7 +625,7 @@ You should see a `200` response in both cases. That just about wraps
 it up for the security show.
 
 
-### DBs
+#### DBs
 
 At the moment we only have Postgres. Istio routes incoming TCP traffic
 from port `5432` to the Postgres server. Here's an easy way to get
@@ -594,3 +641,120 @@ secret.
 
 [httpbin-rbac]: ../deployment/mesh-infra/security/opa/rego/httpbin/rbacdb.rego
 [sec]: ./sec-design/README.md
+
+
+### Adding the Dummy FDP/SFDP
+
+A dummy FDP and SFDP are ready to be deployed in the system. Once the node is up and running modify some files as follows.
+
+First of all, you have to inform ArgoCD about the two new components to take care of: 
+
+```bash
+nano mesh-infra/argocd/projects/plat-app-services/kustomization.yaml
+```
+
+Thus, uncomment the lines referring to `fdp-sync-dummy` and `sfdp-sync-dummy`
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- project.yaml
+- httpbin
+- fdp-sync-dummy
+- sfdp-sync-dummy
+```
+
+> If you want to know more about the definition of these components for ArgoCD, please refer to the files in the folders `mesh-infra/argocd/projects/plat-app-services/fdp-sync-dummy` and `mesh-infra/argocd/projects/plat-app-services/sfdp-sync-dummy`
+
+
+Then, inform k8s about the characteristics of the components:
+
+```bash
+nano plat-app-services/kustomization.yaml
+```
+
+also here, uncomment the lines referring to `fdp-sync-dummy` and `sfdp-sync-dummy`
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- httpbin/
+- fdp-sync-dummy
+- sfdp-sync-dummy
+```
+
+>If you want to know more about the manifests of these two components, please refer to the files in the folders `plat-app-services/fdp-sync-dummy` and `plat-app-services/sfdp-sync-dummy`.
+
+Finally, enable the opa rules related to these services:
+
+```bash
+nano mesh-infra/security/opa/kustomization.yaml
+```
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ingress-policy.yaml
+- opa-envoy-plugin.yaml
+
+secretGenerator:
+- name: opa-policy
+  files:
+  - rego/main.rego
+  - authnz.envopa.rego=rego/authnz/envopa.rego
+  - authnz.http.rego=rego/authnz/http.rego
+  - authnz.oidc.rego=rego/authnz/oidc.rego
+  - authnz.rbac.rego=rego/authnz/rbac.rego
+  - config.oidc.rego=rego/config/oidc.rego
+  - fdpsyncdummy.service.rego=rego/fdpsyncdummy/service.rego
+  - fdpsyncdummy.rbacdb.rego=rego/fdpsyncdummy/rbacdb.rego
+  - sfdpsyncdummy.service.rego=rego/sfdpsyncdummy/service.rego
+  - sfdpsyncdummy.rbacdb.rego=rego/sfdpsyncdummy/rbacdb.rego
+  - httpbin.service.rego=rego/httpbin/service.rego
+  - httpbin.rbacdb.rego=rego/httpbin/rbacdb.rego
+  - minio.service.rego=rego/minio/service.rego
+```
+
+> Again, if you want to explore the OPA Rego rules for these two components, please refer to the files in the folders `mesh-infra/security/opa/rego/fdpsyncdummy/` and `mesh-infra/security/opa/rego/fdpsyncdummy/`.
+
+After all these modifications, commit the changes to the origin repo via git. Wait some minutes for ArgoCD to fecth the changes and you will see the FDP and SFDP in the list of deployed pods.
+
+```bash
+kubectl get pod -A
+```
+
+These services rely on the same users of the httpbin example. Thus, first get the token 
+
+```bash
+$ export jeejees_token=$(\
+    curl -s \
+      http://localhost/keycloak/realms/teadal/protocol/openid-connect/token \
+      -d 'grant_type=password' -d 'client_id=admin-cli' \
+      -d 'username=jeejee@teadal.eu' -d 'password=abc123' | jq -r '.access_token')
+```
+
+Then call the FDP
+
+```bash
+$ curl -i -X GET localhost/fdp-sync-dummy/patients \
+       -H "Authorization: Bearer ${jeejees_token}"
+$ curl -i -X GET localhost/fdp-sync-dummy/patients \
+       -H "Authorization: Bearer ${sebs_token}"
+``` 
+
+Because of the OPA Rego rules, the first call returns the list of patients, while the second one is not allowed (403). Instead:
+
+```bash
+$ curl -i -X GET localhost/fdp-sync-dummy/patients/age?min=10&max=30 \
+       -H "Authorization: Bearer ${jeejees_token}"
+$ curl -i -X GET localhost/fdp-sync-dummy/patients/age?min=10&max=30 \
+       -H "Authorization: Bearer ${sebs_token}"
+``` 
+
+are calls permitted to both the users.
