@@ -69,7 +69,7 @@ func createPV(storage string, node_name string, volume_name string, path string)
 func writePV(index int, storage string, node_name string) error {
 	i_to_string := strconv.Itoa(index)
 	volume_name := node_name + "-" + i_to_string
-	path := "/data/d" + i_to_string
+	path := "/mnt/data/d" + i_to_string
 	new_pv := createPV(storage, node_name, volume_name, path)
 
 	file_name := node_name + "/" + node_name + "-" + i_to_string + ".yaml"

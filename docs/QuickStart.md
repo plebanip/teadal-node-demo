@@ -154,7 +154,7 @@ should be backed by disk partitions, but for simplicity's sake we'll go and crea
 directories directly on the `/mnt` directory. To do so, you may execute:
 
 ```bash
-sudo mkdir -p /data/d{1..10}
+sudo mkdir -p /mnt/data/d{1..10}
 ```
 
 To ensure that the pods will have the right permissions to write on these folders,
@@ -162,7 +162,7 @@ you may give full write permissions on the folder you just created with the foll
 command:
 
 ```bash 
-sudo chmod -R 777 /data
+sudo chmod -R 777 /mnt/data
 ```
 
 Now it is time to generate the .yaml files to setup the storage. To this aim, there is a tool developed named ``pvlocalgen`` that can be used and that has been included in the nix shell. This tool creates a folder named as <HOST_NAME> with the required files that must be moved to the proper location afterwards
