@@ -388,7 +388,7 @@ About the latter, it is required a step beforehand. You have to generate a deplo
 Now it is time to run a tool already integrated in the nix shell. Indicates firstly the password for postgres, then for keycloak. For argocd, it is required to indicate the username and the value of the token generated before.
 
 ```bash
-node.config
+node.config -microk8s secrets
 ```
 
 A message informing that everything has been setup should appear

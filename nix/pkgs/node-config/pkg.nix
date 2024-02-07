@@ -3,10 +3,12 @@
 }:
 buildGoApplication {                                          # NOTE (1)
   pname = "node.config";
-  version = "0.1.2";
+  version = "0.1.3";
   src = ./cmd;
+  pwd = ./cmd;
   modules = ./gomod2nix.toml;
   nativeBuildInputs = [ gomod2nix ];                          # NOTE (2)
+  doCheck = false; # Testing this would require to build a kube cluter every time, lets not do this just to get the shell (we test before updating, pinky prommis!)
 }
 # NOTE
 # ----
@@ -18,4 +20,4 @@ buildGoApplication {                                          # NOTE (1)
 #
 # 2. gomod2nix. Added as an extra convenience to be able to easily generate
 # `gomod2nix.toml`. In fact, with that in our native build inputs you can
-# just run `nix develop .#node.config` to get a shell with gomod2nix.
+# just run `nix develop .#node-config` to get a shell with gomod2nix.

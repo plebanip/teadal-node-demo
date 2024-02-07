@@ -9,19 +9,19 @@ format:
   script:
     - go fmt $(go list ./... | grep -v /vendor/)
     - go vet $(go list ./... | grep -v /vendor/)
-    - go test -race $(go list ./... | grep -v /vendor/)
+    - SKIP_E2E=True go test -race $(go list ./... | grep -v /vendor/)
 
 compile:
   stage: build
   script:
-    - mkdir -p mybinaries
-    - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o mybinaries/teadal.config_linux_amd64
-    - CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o mybinaries/teadal.config_linux_arm64
-    - CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o mybinaries/teadal.config_linux_amd64
-    - CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o mybinaries/teadal.config_linux_arm64
+    - mkdir -p node.config
+    - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o node.config/teadal.config_linux_amd64
+    - CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o node.config/teadal.config_linux_arm64
+    - CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o node.config/teadal.config_darwin_amd64
+    - CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o node.config/teadal.config_darwin_arm64
   artifacts:
     paths:
-      - mybinaries
+      - node.config
   only:
     - tags
   except:
