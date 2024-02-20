@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pipeline-dummy-config
+data:
+  FDP_HOST: "http://fdp-sync-dummy.default.svc.cluster.local"
+  FDP_PORT: "8080"
+  FDP_PATH: "patients"
+  MINIO_HOST: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local"
+  MINIO_PORT: "9000"
+  MINIO_ACCESS_KEY: "LTXG5CVY0MXLE0WO75Q6"
+  MINIO_SECRET_KEY: "IKxps9GTiPGBZaK6BRmeF434lGZCNx0XG3sa4PLE"
+  BUCKETNAME: "teadal"
+  SFDP_FILENAME: "patients-sfdp.json"
+  KFP_HOST: "http://ml-pipeline-ui.kubeflow.svc.cluster.local"
+  KFP_PORT: "80"
+---
+# For testing on local k8s
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: pipeline-dummy-config
+#data:
+#  FDP_HOST: "http://host.k3d.internal"
+#  FDP_PORT: "8181"
+#  FDP_PATH: "patients"
+#  MINIO_HOST: "host.k3d.internal"
+#  MINIO_PORT: "9000"
+#  MINIO_ACCESS_KEY: "minio_user"
+#  MINIO_SECRET_KEY: "minio_password"
+#  BUCKETNAME: "teadal"
+#  SFDP_FILENAME: "patients-sfdp.json"
+#  KFP_HOST: "http://ml-pipeline-ui.kubeflow.svc.cluster.local"
+#  KFP_PORT: "80"
+#---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pipeline-dummy
+  namespace: default
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+        - name: pipeline-dummy
+          image: registry.teadal.ubiwhere.com/teadal-public-images/dummy-services/pipeline-dummy
+          imagePullPolicy: Always
+          env:
+            - name: FDP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key: FDP_HOST
+            - name: FDP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  FDP_PORT
+            - name: FDP_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  FDP_PATH
+            - name: MINIO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  MINIO_HOST
+            - name: MINIO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  MINIO_PORT
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  MINIO_ACCESS_KEY
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  MINIO_SECRET_KEY
+            - name: BUCKETNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  BUCKETNAME
+            - name: SFDP_FILENAME
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  SFDP_FILENAME
+            - name: KFP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  KFP_HOST
+            - name: KFP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pipeline-dummy-config
+                  key:  KFP_PORT
+      restartPolicy: Never
+  backoffLimit: 1
