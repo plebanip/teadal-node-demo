@@ -794,3 +794,44 @@ $ curl -i -X GET localhost/fdp-sync-dummy/patients/age?min=10&max=30 \
 ``` 
 
 are calls permitted to both the users.
+
+### Optional: Deploy and execute dummy pipeline
+
+Pre-requisites:
+
+- Deployment of Teadal.Node and its services (e.g., Kubeflow)
+- Deployment of FDP
+- Deployment of sFDP
+- Invocation of FDP patients/ endpoint returns patients data
+- Invocation of sFDP patients/ endpoint does not return any data (unless this 
+is not the first execution of the dummy pipeline on this node)
+
+The dummy pipeline executes as a K8s Job that reads all patients data from the
+dummy-FDP, removes the address attribute from each patient record, and then
+writes the results to a file the dummy-sFDP reads from on minio. You can execute
+it as shown below. If you have deployed the dummy pipeline previously, delete
+the corresponding K8 Job first to trigger execution:
+
+```bash
+cd teadal.node/deployment/pilot-services/
+# remove any previously deployed dummy-pipeline
+kubectl delete jobs/pipeline-dummy 
+kubectl apply -k pipeline-dummy
+```
+
+You can inspect the execution of the pipeline in the kubeflow UI under `Runs` (e.g.,
+http://localhost:8181). To access the Kubeflow UI, you need to set up
+port-forwarding followed by appropriate SSH tunnelling:
+
+```bash
+kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8181:80
+ssh <any_other_ssh_tunnelling> -L 8181:localhost:8181 <user>@<yourvm>
+```
+
+Once the pipeline has completed successfully, invoking the sFDP will return
+patients data (remember to refresh the token if necessary).
+
+```bash
+curl -i -X GET localhost/sfdp-sync-dummy/patients \
+       -H "Authorization: Bearer ${jeejees_token}"
+```
