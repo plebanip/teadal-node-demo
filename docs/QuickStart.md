@@ -91,7 +91,7 @@ export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
 
 Create the config file which will be used by some tools to generate secrets and storage
 ```bash
-microk8s config > /home/ubuntu/.kube/config
+microk8s config > ~/.kube/config
 ```
 
 <!-- > Note to make the k8s accessible from outside of the VM
