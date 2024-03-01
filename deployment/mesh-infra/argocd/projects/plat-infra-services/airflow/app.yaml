@@ -21,6 +21,12 @@ spec:
             value: "false"
           - name: migrateDatabaseJob.applyCustomEnv
             value: "false"
+          - name: dags.persistence.enabled
+            value: "true"
+          - name: dags.persistence.storageClassName
+            value: "local-storage"
+          - name: dags.gitSync.enabled
+            value: "false"
           - name: config.webserver.base_url
             value: "http://localhost:8080/airflow"
         valueFiles: 
