@@ -211,6 +211,8 @@ Deploy Istio to the cluster using our own profile
 istioctl install -y --verify -f mesh-infra/istio/profile.yaml
 ```
 
+Make sure that your VM has the port 80, 443, 8080.
+
 For now platform infra services (e.g. DBs) as well as app services
 (e.g. file transfer UI) sit in K8s' `default` namespace, so tell Istio
 to auto-magically add an Envoy sidecar to each service deployed to
