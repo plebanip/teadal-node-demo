@@ -116,6 +116,18 @@ Something like this should appear
 
 ![screenshot](./images/microk8s-1.png)
 
+> **Note if you are going to deploy the node on a ARM64 machine**
+>
+> The image of OPA available on official registries is only for AMD64. For this reason it is required to build and insert in the local registry an ARM64 based image. No worries, we have prepared everything, and you only need to run the following commands
+>
+>```bash
+>$ cd nix
+>$ nix build .#opa-envoy-plugin-img
+>$ ls -l ./result
+>lrwxr-xr-x ./result -> /nix/store/>ijc13ymym2rrw2x2czlv9yn6fjqfxf2s-docker-image-opa.tar.gz
+>$ cat result | gzip -d > opa.tar
+>```
+
 ### Setup the network
 
 The mesh we're going to roll out needs to be connected to some ports
@@ -386,6 +398,8 @@ When terminated, install the secrets in the cluster.-->
 
 To setup the secrets it is required to generate the passwords for *keycloak*, *postgres*, and *argocd*. 
 About the latter, it is required a step beforehand. You have to generate a deploy token from the GitLab repository. To do so, on the GitLab web page of your repo, go to the screen *Setting>Repository>Deploy tokens*. The *Expand>Add token* and insert a new token like the one in the following figure. Take note of the *username* and the *token* created.
+
+![screenshot](./images/deploytoken.png)
 
 Now it is time to run a tool already integrated in the nix shell. Indicates firstly the password for postgres, then for keycloak. For argocd, it is required to indicate the username and the value of the token generated before.
 
