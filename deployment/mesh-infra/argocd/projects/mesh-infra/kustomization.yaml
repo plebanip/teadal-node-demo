@@ -16,3 +16,4 @@ resources:
 - reloader
 - routing
 - sc
+- kepler
