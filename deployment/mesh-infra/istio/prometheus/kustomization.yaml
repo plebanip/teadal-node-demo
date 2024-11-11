@@ -3,5 +3,5 @@ kind: Kustomization
 
 
 resources:
+- ./prometheus.yaml
 #- https://raw.githubusercontent.com/istio/istio/1.18.0/samples/addons/prometheus.yaml
-- https://raw.githubusercontent.com/BrunoFeitais/prometheuskepler/main/prometheus.yaml
