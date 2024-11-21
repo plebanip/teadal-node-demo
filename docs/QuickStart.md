@@ -339,7 +339,6 @@ grab that password, run
 ```bash 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
-
 You can use it if you get in trouble during the bootstrap procedure,
 but keeping it around is like an accident waiting to happen. So you
 should definitely zap it as soon as you've managed to log into Argo
@@ -378,6 +377,68 @@ After sometime this command returns the basic set of pods up and running.
 
 You can notice that two pods do not run properly. To make everything working, we need the last step, the configuration of the secrets also to allow ArgoCD to fecth the repo.
 
+
+#### Advocate deployment
+
+In path */deployment/plat-infra-services/advocatel* , there are files related to deploy advocate service. 
+
+In order  to deploy advocate, you need to update the kustomization.yaml in */deployment/plat-infra-services/advocatel* directory with actual values of your deployment environment :
+
+>* Make sure to update this command with the IP address of your blockchain server:
+
+```bash
+patches:
+- target:
+    kind: Deployment
+    name: advocate
+  patch: |-
+    - op: add
+      path: /spec/template/spec/hostAliases
+      value:
+      - ip: "<TEADAL_BLOCKCHAIN_IP>"
+        hostnames:
+        - "teadal.blockchain"
+```
+
+ * The name of blockchain host should be "teadal.blockchain". Please do not alter the name.
+>>
+>* There is also some addresses under the configMapGenerator property  that should be replaced with the actual values of your deployment:
+>>
+```bash
+configMapGenerator:
+- name: advocate-config
+  literals:
+  - ADVOCATE_IPFS_CONNECTION=<IPFS_CONNECTION_ADDRESS>
+  - ADVOCATE_JAEGER_QUERY_ADDRESS=tracing.istio-system.svc.cluster.local:16685
+  - ADVOCATE_SELF_ADDRESSES=<ADVOCATE_ADDRESSES>,...
+  - ADVOCATE_PUBLIC_ADDRESS=https://localhost/advocate
+
+```
+
+
+In case that you are using the embeded IPFS, you need to address ipfs.yaml file in resources in *Kustomization.yaml* and the  default value of *ADVOCATE_IPFS_CONNECTION* config which is *http://ipfs.trust-plane.svc.cluster.local:5001/api/v0/*  does not need to be change. Otherwise put address of your ipfs service in *<IPFS_CONNECTION_ADDRESS>* and comment the ipfs.yaml under resources property. *<ADVOCATE_ADDRESSES>*  is the internal address of advocate service in deployment environment and *<ADVOCATE_PUBLIC_ADDRESS>* is public address to access the advocate. In this file there is also tracing service address (JAEGER) which points to the tracing service in the istio-system name space on default port 16685.
+
+
+
+Check the */deployment/plat-infra-services/kustomization.yaml* file to make sure that the advocate is in the list of resources and the run below command to deploy advocate in a namespace called *trust-plane* .
+
+```bash
+kustomize build plat-infra-services/advocate/kustomization.yaml | kubectl apply -f -
+```
+
+Note, that for advocate to work flawlessly, you need to have permissions to create cluster resources and namespaces.
+Furthermore, you'll need to have access to an ETH network, either testing or mainnet, with a valid account and some ETH to pay for the transactions. Moreover, you either have to deploy or have access to IPFS node to store the files. You can uncomment the IPFS deployment in the `kustomization.yaml` file to deploy an IPFS node.
+We assume your cluster is running a recent version of Jaeger that this node can reach. Befor advocate will work you will need to configure all needed secrets, variables releated to the advocate blockchain such as wallet private key, VM key and Ethereum Remote Procedure Call (RPC) Address. For that follow the steps in the [K8s secrets](#k8s-secrets) section.
+
+In this picture pods in trust-plane name space are shown:
+
+![screenshot](./images/trust-plane-namespace-podes.png)
+
+>* And here is advocate pod log:
+>>
+
+![screenshot](./images/advocate-pod-log.png)
+
 #### K8s secrets
 
 <!--```bash
@@ -408,7 +469,7 @@ node.config -microk8s secrets
 
 A message informing that everything has been setup should appear
 
-![screenshot](./images/microk8s-4.png)
+![screenshot](./images/microk8s-config-node.png)
 
 
 After few minutes, ArgoCD starts fecthing the repo and deploying the required containers. Now, when executing 

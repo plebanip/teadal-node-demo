@@ -21,6 +21,12 @@ spec:
   - hosts:
     - "*"
     port:
+      name: advocate
+      number: 8000
+      protocol: TCP 
+  - hosts:
+    - "*"
+    port:
       name: kubeflow
       number: 3810
       protocol: HTTP

@@ -15,3 +15,10 @@ spec:
         host: postgres.default.svc.cluster.local
         port:
           number: 5432
+  - match: 
+    - port: 8000
+    route:
+    - destination:
+        host: advocate.trust-plane.svc.cluster.local
+        port:
+          number: 8000

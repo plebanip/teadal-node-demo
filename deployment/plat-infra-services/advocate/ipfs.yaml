@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ipfs
+  name: ipfs
+  namespace: trust-plane
+spec:
+  ports:
+  - name: http-api
+    port: 8080
+    targetPort: 8080
+  - name: http-rpc
+    port: 5001
+    targetPort: 5001
+  selector:
+    app: ipfs
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ipfs-init-script
+  namespace: trust-plane
+data:
+  001-test.sh: |
+    #!/bin/sh
+    ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["http://localhost:8888", "http://127.0.0.1:5001", "https://webui.ipfs.io", "http://ipfs.teadal-platform.svc.cluster.local:5001"]'
+    ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST"]'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ipfs
+  name: ipfs
+  namespace: trust-plane
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ipfs
+  template:
+    metadata:
+      labels:
+        app: ipfs
+        sidecar.istio.io/inject: "true"
+    spec:
+      volumes:
+      - name: ipfs-init-script
+        configMap:
+          name: ipfs-init-script
+      - name: ipfs-data
+        emptyDir: {} # replace with a persistent volume claim if you want to keep the data
+      containers:
+      - image: ipfs/kubo:v0.19.1
+        imagePullPolicy: IfNotPresent
+        name: ipfs
+        ports:
+        - containerPort: 5001
+          name: rpc
+        - containerPort: 8080
+          name: gateway
+        env:
+          - name: IPFS_PROFILE
+            value: server
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: ipfs-init-script
+          mountPath: /container-init.d/001-test.sh
+          readOnly: true
+        - name: ipfs-data
+          mountPath: /data/ipfs
+          readOnly: false

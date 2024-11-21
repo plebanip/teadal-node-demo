@@ -36,3 +36,4 @@ spec:
         - "/airflow/*"
         notPorts:
         - "5432"
+        - "8000"

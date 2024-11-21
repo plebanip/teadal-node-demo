@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: advocate
+  namespace: trust-plane
+---
+# This is an overly permissive role, we should restrict it to the minimum required permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: advocate
+rules:
+- apiGroups: ["", "*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: advocate
+subjects:
+- kind: ServiceAccount
+  name: advocate
+  namespace: trust-plane
+roleRef:
+  kind: ClusterRole
+  name: advocate
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: advocate
+  name: advocate
+  namespace: trust-plane
+spec:
+  ports:
+  - name: https
+    port: 8000 # advocatepie.default.svc.cluster.local
+    targetPort: 8000
+  selector:
+    app: advocate
+    
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: advocate
+  name: advocate
+  namespace: trust-plane
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: advocate
+  template:
+    metadata:
+      labels:
+        app: advocate
+      namespace: trust-plane
+      annotations:
+        prometheus.io/scrape: "true"
+    spec:    
+      serviceAccountName: advocate
+      automountServiceAccountToken: true
+      containers:
+        - name: advocate
+          image: git.tu-berlin.de:5000/teadal/advocate_pie:dev
+          ports:
+            - containerPort: 8000 #Expose advocate API to check that the system is running!
+              protocol: TCP
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+        
+          envFrom:
+          - configMapRef:
+              name: advocate-config
+          env:
+            - name: ADVOCATE_WALLET_PRIVATEKEY_FILE
+              valueFrom:
+                secretKeyRef:
+                  name: advocate-wallet
+                  key: ADVOCATE_WALLET_PRIVATEKEY_FILE
+            - name: ADVOCATE_VM_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: advocate-wallet
+                  key: ADVOCATE_VM_KEY
+            - name: ADVOCATE_ETH_RPC_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: advocate-wallet
+                  key: ADVOCATE_ETH_RPC_ADDRESS

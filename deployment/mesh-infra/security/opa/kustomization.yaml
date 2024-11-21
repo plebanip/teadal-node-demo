@@ -11,7 +11,7 @@ secretGenerator:
   - rego/main.rego
   - authnz.envopa.rego=rego/authnz/envopa.rego
   - authnz.http.rego=rego/authnz/http.rego
-  - authnz.oidc.rego=rego/authnz/oidc.rego
+  - authnz.oidc.rego=rego/authnz/oidc.rego                            
   - authnz.rbac.rego=rego/authnz/rbac.rego
   - config.oidc.rego=rego/config/oidc.rego
   # - fdpsyncdummy.service.rego=rego/fdpsyncdummy/service.rego

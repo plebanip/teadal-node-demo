@@ -3,52 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	core "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
-
-// CreateOrUpdateSecretWithStruct creates or updates a Kubernetes secret with the provided struct.
-// It first tries to get the secret, if it exists it updates it, otherwise it creates a new one.
-// It returns an error if the creation or update operation fails.
-func CreateOrUpdateSecretWithStruct(ctx context.Context, client kubernetes.Interface, sec *core.Secret) error {
-	secrets_client := client.CoreV1().Secrets(sec.Namespace)
-	_sec, err := secrets_client.Get(ctx, sec.Name, v1.GetOptions{})
-
-	if err != nil { //for now assuem it didn't exsist and just create it..
-		//Not perfect, we should porbly. use a template?
-
-		_, err := secrets_client.Create(ctx, sec, v1.CreateOptions{})
-		if err != nil {
-			return fmt.Errorf("failed to create %s password. You are on your own. %+v", sec.Name, err)
-		}
-	} else {
-		//TODO: implemet a merge instead..
-		_sec.StringData = sec.StringData
-		_, err := secrets_client.Update(context.Background(), _sec, v1.UpdateOptions{})
-		if err != nil {
-			return fmt.Errorf("failed to update %s password. You are on your own. %+v", sec.Name, err)
-		}
-	}
-	return nil
-}
-
-// CreateOrUpdateSecret creates or updates a Kubernetes secret.
-// It takes in parameters for the context, client, namespace, name, data, and labels.
-// It constructs a secret struct from the provided parameters and then calls CreateOrUpdateSecretWithStruct.
-// It returns an error if the creation or update operation fails.
-func CreateOrUpdateSecret(ctx context.Context, client kubernetes.Interface,
-	namespace, name string, data, labels map[string]string) error {
-	sec := &core.Secret{}
-	sec.Name = name
-	sec.Namespace = namespace
-	sec.Type = core.SecretTypeOpaque
-	sec.StringData = data
-	return CreateOrUpdateSecretWithStruct(ctx, client, sec)
-}
 
 func createArgoRepoFrom(ctx context.Context, argoURL string, username string, token string, client kubernetes.Interface) error {
 	sec := &core.Secret{}
@@ -92,4 +53,50 @@ func createArgoSecretFromPassword(ctx context.Context, client kubernetes.Interfa
 
 	return CreateOrUpdateSecretWithStruct(ctx, client, sec)
 
+}
+
+func ConfigureAdvocateSecrets(ctx context.Context, client kubernetes.Interface,
+	eth_rpc_address, wallet_key string,
+	permissioned_chain bool) error {
+
+	node_key, err := GenerateRandomStringURLSafe(16)
+	if err != nil {
+		return fmt.Errorf("failed to generate nodeKey %+v", err)
+	}
+	sec := &core.Secret{}
+	sec.Name = "advocate-wallet"
+	sec.Namespace = "trust-plane"
+	sec.Type = "Opaque"
+
+	if !strings.HasSuffix("\"", wallet_key) && !strings.HasPrefix("\"", wallet_key) {
+		wallet_key = fmt.Sprintf("\"%s\"", wallet_key)
+	}
+
+	if !strings.HasPrefix("\"0x", wallet_key) {
+		return fmt.Errorf("The wallet key should be start with 0x and be in hexerdecimal format.")
+	}
+
+	sec.StringData = map[string]string{
+		"ADVOCATE_WALLET_PRIVATEKEY_FILE": wallet_key,
+		"ADVOCATE_VM_KEY":                 node_key,
+		"ADVOCATE_ETH_RPC_ADDRESS":        eth_rpc_address,
+	}
+
+	err = CreateOrUpdateSecretWithStruct(ctx, client, sec)
+	if err != nil {
+		return fmt.Errorf("failed to create advocate-wallet secrete %+v", err)
+	}
+
+	if permissioned_chain {
+		err := CreateOrUpdateConfig(ctx, client, "trust-plane", "advocate-config", map[string]string{
+			"ADVOCATE_ETH_POA":        "1",
+			"ADVOCATE_ETH_GAS_PRICE":  "0",
+			"ADVOCATE_INSECURE_HTTPS": "1",
+		})
+		if err != nil {
+			return fmt.Errorf("failed to update config to use a permissioned chain %+v", err)
+		}
+	}
+
+	return nil
 }

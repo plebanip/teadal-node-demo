@@ -94,6 +94,10 @@ spec:
               nodePort: 5432
               targetPort: 5432
               name: postgres
+            - port: 8000
+              nodePort: 8000
+              targetPort: 8000
+              name: advocate
             - port: 3810
               nodePort: 3810
               targetPort: 3810

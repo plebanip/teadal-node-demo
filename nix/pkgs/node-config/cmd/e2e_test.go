@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 	v1 "k8s.io/api/core/v1"
 
@@ -26,25 +27,30 @@ const clusterName = "teadal.node.config.test"
 func TestMain(t *testing.M) {
 	//IF the SKIP_E2E variable is set, we do not run these (for gitlab ci)
 	if _, set := os.LookupEnv("SKIP_E2E"); set {
+		os.Exit(t.Run())
+	} else {
 		testenv, _ = env.NewFromFlags()
 		// pre-test setup of kind cluster
 		testenv.Setup(
 			envfuncs.CreateCluster(kind.NewProvider().WithOpts(kind.WithImage("kindest/node:v1.27.3")), clusterName),
 			envfuncs.CreateNamespace("argocd"),
+			envfuncs.CreateNamespace("trust-plane"),
 		)
 		// post-test teardown kind cluster
 		testenv.Finish(
 			envfuncs.DeleteNamespace("argocd"),
+			envfuncs.DeleteNamespace("trust-plane"),
 			envfuncs.DestroyCluster(clusterName),
 		)
-		os.Exit(t.Run())
-	} else {
 		os.Exit(testenv.Run(t))
 	}
 
 }
 
-func Test_Secrets(t *testing.T) {
+func Test_ArgoSecrets(t *testing.T) {
+	if testenv == nil {
+		t.Skip()
+	}
 	deploymentFeature := features.New("argocd/secret").
 		Setup(func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			client, err := kubernetes.NewForConfig(cfg.Client().RESTConfig())
@@ -70,6 +76,44 @@ func Test_Secrets(t *testing.T) {
 		}).
 		Teardown(func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			dep := ctx.Value("argocd-secret").(*v1.Secret)
+			if err := cfg.Client().Resources().Delete(ctx, dep); err != nil {
+				t.Fatal(err)
+			}
+			return ctx
+		}).Feature()
+
+	testenv.Test(t, deploymentFeature)
+}
+
+func Test_AdvocateSecrets(t *testing.T) {
+	if testenv == nil {
+		t.Skip()
+	}
+	deploymentFeature := features.New("advocate/secret").
+		Setup(func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			client, err := kubernetes.NewForConfig(cfg.Client().RESTConfig())
+			if err != nil {
+				t.Fatalf("could not create test clinet %+v", err)
+			}
+			err = ConfigureAdvocateSecrets(ctx, client, "https://foo.bar:5435", "0x1251243145fasf1235124", true)
+			if err != nil {
+				t.Fatalf("could nto create advocate secrets... %+v", err)
+			}
+			return ctx
+		}).
+		Assess("deployment creation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			var sec v1.Secret
+			if err := cfg.Client().Resources().Get(ctx, "advocate-wallet", "trust-plane", &sec); err != nil {
+				t.Fatal(err)
+			}
+			assert.Equal(t, "\"0x1251243145fasf1235124\"", string(sec.Data["ADVOCATE_WALLET_PRIVATEKEY_FILE"]))
+			assert.NotNil(t, sec.StringData["ADVOCATE_VM_KEY"])
+			assert.Equal(t, "https://foo.bar:5435", string(sec.Data["ADVOCATE_ETH_RPC_ADDRESS"]))
+
+			return context.WithValue(ctx, "advocate-wallet", &sec)
+		}).
+		Teardown(func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			dep := ctx.Value("advocate-wallet").(*v1.Secret)
 			if err := cfg.Client().Resources().Delete(ctx, dep); err != nil {
 				t.Fatal(err)
 			}
