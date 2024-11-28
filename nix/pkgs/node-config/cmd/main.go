@@ -81,7 +81,8 @@ func main() {
 			fmt.Println("🎉 you are all set, happy TEADALing 🎉")
 			return nil
 		},
-			return cli.ShowAppHelp(ctx)
+		Action: func(ctx *cli.Context) error {
+				return cli.ShowAppHelp(ctx)
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
