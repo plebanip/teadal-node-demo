@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
 - project.yaml
 - httpbin
+- advocate
 # - fdp-sync-dummy
 # - sfdp-sync-dummy

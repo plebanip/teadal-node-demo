@@ -60,6 +60,11 @@ func main() {
 				Action: SecretCmd,
 			},
 			{
+				Name:   "advocate",
+				Usage:  "configure advocate tool",
+				Action: AdvocateCmd,
+			},
+			{
 				Name:   "pv",
 				Usage:  "generate pvs for your teadal node",
 				Action: PvCmd,
