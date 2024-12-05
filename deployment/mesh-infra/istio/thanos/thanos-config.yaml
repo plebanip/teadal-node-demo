@@ -1,0 +1,10 @@
+type: S3
+config:
+  bucket: "thanos-bucket"           # Nome del bucket MinIO
+# endpoint: "minio.istio-system.svc.cluster.local:9000"  # Endpoint del servizio MinIO
+# access_key: "minio-access-key"   # Chiave di accesso MinIO
+# secret_key: "minio-secret-key"   # Chiave segreta MinIO
+  endpoint: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000"  # Endpoint del servizio MinIO
+  access_key: ${MINIO_ACCESS_KEY}  # Variabile di ambiente
+  secret_key: ${MINIO_SECRET_KEY}  # Variabile di ambiente
+  insecure: true                   # Usa `true` se non stai usando HTTPS

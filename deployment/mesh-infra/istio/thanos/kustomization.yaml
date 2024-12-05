@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: istio-system
+
+resources:
+  # Base components di Thanos
+  - ./localpath/thanos-query-deployment.yaml
+  - ./localpath/thanos-store-deployment.yaml
+
+    # - https://raw.githubusercontent.com/thanos-io/kube-thanos/main/manifests/thanos-sidecar.yaml
+  - ./localpath/thanos-sidecar-deployment.yaml
+  
+  
+    # - https://raw.githubusercontent.com/thanos-io/kube-thanos/main/manifests/thanos-compactor.yaml
+  - ./localpath/thanos-compact-deployment.yaml
+  
+    # - https://raw.githubusercontent.com/thanos-io/kube-thanos/main/manifests/thanos-ruler.yaml
+  - ./localpath/thanos-rule-deployment.yaml
+
+
+patchesStrategicMerge:
+  # Personalizzazioni locali, se necessarie
+  # - custom-thanos-sidecar.yaml
+  # - custom-thanos-query.yaml
+
+configMapGenerator:
+  # Configurazioni per Thanos
+   - name: thanos-config
+     files:
+       - thanos-config.yaml
