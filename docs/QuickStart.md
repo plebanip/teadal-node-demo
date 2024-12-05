@@ -378,7 +378,7 @@ After sometime this command returns the basic set of pods up and running.
 You can notice that two pods do not run properly. To make everything working, we need the last step, the configuration of the secrets also to allow ArgoCD to fecth the repo.
 
 
-#### Advocate deployment
+<!--#### Advocate deployment
 
 In path */deployment/plat-infra-services/advocatel* , there are files related to deploy advocate service. 
 
@@ -437,7 +437,7 @@ In this picture pods in trust-plane name space are shown:
 >* And here is advocate pod log:
 >>
 
-![screenshot](./images/advocate-pod-log.png)
+![screenshot](./images/advocate-pod-log.png)-->
 
 #### K8s secrets
 
