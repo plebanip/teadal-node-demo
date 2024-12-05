@@ -67,7 +67,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: advocate
-          image: git.tu-berlin.de:5000/teadal/advocate_pie:dev
+          image: registry.teadal.ubiwhere.com/teadal-tech/advocate
           ports:
             - containerPort: 8000 #Expose advocate API to check that the system is running!
               protocol: TCP
