@@ -25,16 +25,34 @@ spec:
         - --objstore.config-file=/etc/thanos/thanos-config.yaml
         - --index-cache-size=2GB
         - --chunk-pool-size=2GB
-        - --data-dir:/data
         volumeMounts:
         - name: thanos-config-volume
           mountPath: /etc/thanos
           readOnly: true
-        - name: data
+        - name: data-cache
           mountPath: /data
+        resources:
+          requests:
+            memory: "3Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 10902
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: 10902
+          initialDelaySeconds: 5
+          periodSeconds: 5
       volumes:
       - name: thanos-config-volume
         configMap:
           name: thanos-config
-      - name: data
+      - name: data-cache
         emptyDir: {}
