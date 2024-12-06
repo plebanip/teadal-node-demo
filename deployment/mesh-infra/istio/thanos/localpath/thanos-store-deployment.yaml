@@ -25,22 +25,16 @@ spec:
         - --objstore.config-file=/etc/thanos/thanos-config.yaml
         - --index-cache-size=2GB
         - --chunk-pool-size=2GB
-        env:
-        - name: MINIO_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: teadal-user-1
-              key: CONSOLE_ACCESS_KEY
-        - name: MINIO_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: teadal-user-1
-              key: CONSOLE_SECRET_KEY
+        - --data-dir:/data
         volumeMounts:
         - name: thanos-config-volume
           mountPath: /etc/thanos
           readOnly: true
+        - name: data
+          mountPath: /data
       volumes:
       - name: thanos-config-volume
         configMap:
           name: thanos-config
+      - name: data
+        emptyDir: {}

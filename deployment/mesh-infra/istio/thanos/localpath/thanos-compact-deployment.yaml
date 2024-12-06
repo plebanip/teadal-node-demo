@@ -24,22 +24,16 @@ spec:
         - compact
         - --objstore.config-file=/etc/thanos/thanos-config.yaml
         - --wait
-        env:
-        - name: MINIO_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: teadal-user-1
-              key: CONSOLE_ACCESS_KEY
-        - name: MINIO_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: teadal-user-1
-              key: CONSOLE_SECRET_KEY
+        - --data-dir=/data
         volumeMounts:
         - name: thanos-config-volume
           mountPath: /etc/thanos
           readOnly: true
+        - name: data
+          mountPath: /data # Monta il volume temporaneo nella directory /data
       volumes:
       - name: thanos-config-volume
         configMap:
           name: thanos-config
+      - name: data
+        emptyDir: {} # Volume temporaneo per la directory /data
