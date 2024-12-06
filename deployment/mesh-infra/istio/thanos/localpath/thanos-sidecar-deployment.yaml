@@ -23,6 +23,7 @@ spec:
         args:
         - sidecar
         - --tsdb.path=/prometheus
+        - --prometheus.url=http://10.152.183.187:9090
         - --objstore.config-file=/etc/thanos/thanos-config.yaml
         volumeMounts:
         - name: thanos-config-volume
