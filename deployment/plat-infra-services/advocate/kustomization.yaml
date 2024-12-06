@@ -12,7 +12,7 @@ images:
 #- name: git.tu-berlin.de:5000/teadal/advocate_pie:dev
 #  newName: git.tu-berlin.de:5000/teadal/advocate_pie
 #  newTag: teadal-node-dev-0.2
-- name: registry.teadal.ubiwhere.com/teadal-tech/advocate
+- name: sepidmas/advocate_pie:feature-cluster
    
 patches:
 - target:
