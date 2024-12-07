@@ -1,0 +1,16 @@
+- apiVersion: v1
+- data:
+    ADVOCATE_ETH_RPC_ADDRESS: aHR0cDovL2dhbmFjaGUudHJ1c3QtcGxhbmUuc3ZjLmNsdXN0ZXIubG9jYWw6ODU0NQ==
+    ADVOCATE_VM_KEY: YV9Gd2wwekVJU29HZ1Q2NVdGemljZz09
+    ADVOCATE_WALLET_PRIVATEKEY_FILE: IjB4MjJhYWJiODExZWZjYTRlNmY0NzQ4YmQxOGE0NmI1MDJmYTg1NTQ5ZGY5ZmEwN2RhNjQ5YzBhMTQ4ZDdkNTUzMCI=
+- kind: Secret
+- metadata:
+  - annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"ADVOCATE_VM_KEY":"dGVzdDEyMzQK","ADVOCATE_WALLET_PRIVATEKEY_FILE":"IjB4MjJhYWJiODExZWZjYTRlNmY0NzQ4YmQxOGE0NmI1MDJmYTg1NTQ5ZGY5ZmEwN2RhNjQ5YzBhMTQ4ZDdkNTUzMCIK"},"kind":"Secret","metadata":{"annotations":{},"name":"advocate-wallet","namespace":"trust-plane"},"stringData":{"ADVOCATE_ETH_RPC_ADDRESS":"https://teadal:bwOsZbprjsK8GRkHjGjq2qhH4XHiOKMW@teadal.blockchain/"},"type":"Opaque"}
+  - creationTimestamp: "2024-02-15T12:36:22Z"
+  - name: advocate-wallet
+  - namespace: trust-plane
+  - resourceVersion: "62265885"
+  - uid: 7dce3b31-a05f-4867-9d25-3d4619b2df99
+- type: Opaque

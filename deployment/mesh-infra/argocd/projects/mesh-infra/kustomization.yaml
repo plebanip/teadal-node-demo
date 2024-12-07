@@ -5,10 +5,10 @@ resources:
 - project.yaml
 - argocd
 - directpv
-- grafana
+# - grafana
 - jaeger
 - keycloak
-- kiali
+# - kiali
 - minio
 - opa
 - prometheus
