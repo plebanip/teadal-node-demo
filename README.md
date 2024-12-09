@@ -22,4 +22,6 @@ In addition to these tools, TEADAL project is providing advanced tools to enable
 
 We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
 
-If you want to deploy your TEADAL node follow the instructions in this [Quickstart document](docs/QuickStart.md)
+To deploy a TEADAL node follow this [Teadal Node Installation guide](docs/InstallTeadalNode.md)
+
+To add a TEADAL node follow [Teadal Tool Installation guide](docs/InstallTeadalTools.md)
