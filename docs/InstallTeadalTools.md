@@ -26,7 +26,7 @@ kubectl create namespace trust-plane
 ```
 Then it is required to configure all needed secrets, variables for Advocate blockchain such as wallet private key, VM key and Ethereum Remote Procedure Call (RPC) Address. For that run this command:
 ```bash
-node.config -advocate
+node.config --microk8s advocate
 ```
 Now you can enter the required values. For the question about the "ADVOCATE_ETH_POA" , enter "1" as value.
 

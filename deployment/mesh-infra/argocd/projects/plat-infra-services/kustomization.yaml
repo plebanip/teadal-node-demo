@@ -6,4 +6,4 @@ resources:
 # - postgres
 # - kubeflow
 # - airflow 
-- advocate
+# - advocate
