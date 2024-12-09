@@ -1,5 +1,9 @@
 # Basic Teadal Node installation
 
+This document provides a guide to install the basic features of the TEADAL node installation which is based on MicroK8S.
+
+We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
+
 ## Table of contents
 - [Setup the environment](#setup-environment)
   - [Git repo](#git-repo)
@@ -406,16 +410,13 @@ then copy and paste the returned value in the `admin.password` and `admin.passwo
 
 When terminated, install the secrets in the cluster.-->
 
-To setup the secrets it is required to generate the passwords for *keycloak*, *postgres*, and *argocd*. 
-About the latter, it is required a step beforehand. You have to generate a deploy token from the GitLab repository. To do so, on the GitLab web page of your repo, go to the screen *Setting>Repository>Deploy tokens*. The *Expand>Add token* and insert a new token like the one in the following figure. Take note of the *username* and the *token* created.
-
-![screenshot](./images/deploytoken.png =100x)
-
-Now it is time to run a tool already integrated in the nix shell. Indicates firstly the password for keycloak and argocd. For argocd, it is required to indicate the username and the value of the deploy token generated before in the repo.
+To generate the k8s secrets that will be used to store the passowrds for *keycloak* and *argocd* we need to run a tool already integrated in the nix shell. Indicates firstly the password for keycloak and argocd. For argocd, it is required to indicate the username and the value of the deploy token generated before in the repo.
 
 ```bash
 node.config -microk8s basicnode-secrets
 ```
+
+![screenshot](./images/microk8s-4.png)
 
 <!--A message informing that everything has been setup should appear
 
