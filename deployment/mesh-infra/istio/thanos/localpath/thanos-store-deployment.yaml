@@ -55,7 +55,10 @@ spec:
         configMap:
           name: thanos-config
       - name: data-cache
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: data-thanos-store-0 # Assicurati che il PVC esista
+      nodeSelector:
+        kubernetes.io/hostname: teadal-baseline
 ---
 apiVersion: batch/v1
 kind: Job
@@ -82,4 +85,3 @@ spec:
                 key: CONSOLE_SECRET_KEY
         command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/teadal-thanos"]
       restartPolicy: Never
-

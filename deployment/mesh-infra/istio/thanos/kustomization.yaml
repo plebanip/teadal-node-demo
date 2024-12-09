@@ -5,18 +5,18 @@ namespace: istio-system
 
 resources:
   # Base components di Thanos
-  - ./localpath/thanos-query-deployment.yaml
+  - ./localpath/thanos-pv.yaml
+  - ./localpath/pvc-thanos-store.yaml
   - ./localpath/thanos-store-deployment.yaml
 
-    # - https://raw.githubusercontent.com/thanos-io/kube-thanos/main/manifests/thanos-sidecar.yaml
+  - ./localpath/thanos-query-deployment.yaml
+
   - ./localpath/thanos-sidecar-deployment.yaml
   
-  
-    # - https://raw.githubusercontent.com/thanos-io/kube-thanos/main/manifests/thanos-compactor.yaml
   - ./localpath/thanos-compact-deployment.yaml
   
-    # - https://raw.githubusercontent.com/thanos-io/kube-thanos/main/manifests/thanos-ruler.yaml
   - ./localpath/thanos-rule-deployment.yaml
+
 
 
 patchesStrategicMerge:
