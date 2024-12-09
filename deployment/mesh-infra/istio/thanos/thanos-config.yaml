@@ -2,6 +2,6 @@ type: S3
 config:
    bucket: "thanos-bucket"           # Nome del bucket MinIO
    endpoint: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000"  # Endpoint del servizio MinIO
-   access_key: "KN335GF5J0GA104HMH4S" 
-   secret_key: "RjLJSEHwPmgBtkDbuqoDiQ9E44UKl6F4NtOU1jpM"  
+   access_key: "S04zMzVHRjVKMEdBMTA0SE1INFM=" 
+   secret_key: "UmpMSlNFSHdQbWdCdGtEYnVxb0RpUTlFNDRVS2w2RjROdE9VMWpwTQ=="  
    insecure: true                   # Usa `true` se non stai usando HTTPS
