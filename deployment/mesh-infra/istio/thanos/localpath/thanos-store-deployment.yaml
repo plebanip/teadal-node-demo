@@ -56,7 +56,7 @@ spec:
           name: thanos-config
       - name: data-cache
         persistentVolumeClaim:
-          claimName: data-thanos-store-0 # Assicurati che il PVC esista
+          claimName: data-thanos-store-0
       nodeSelector:
         kubernetes.io/hostname: teadal-baseline
 ---
@@ -64,11 +64,15 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-bucket
-  namespace: minio-operator 
+  namespace: istio-system 
 spec:
   ttlSecondsAfterFinished: 100
   template:
     spec:
+      initContainers:
+      - name: wait-for-minio
+        image: busybox
+        command: ["sh", "-c", "until nc -zv teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local 9000; do echo 'Waiting for MinIO...'; sleep 5; done"]
       containers:
       - name: mc
         image: minio/mc:RELEASE.2023-06-23T18-12-07Z
@@ -83,5 +87,5 @@ spec:
               secretKeyRef:
                 name: teadal-user-1
                 key: CONSOLE_SECRET_KEY
-        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/teadal-thanos"]
+        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/teadal-thanos || echo 'Bucket creation failed or already exists'"]
       restartPolicy: Never
