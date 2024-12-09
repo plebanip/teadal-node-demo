@@ -16,6 +16,8 @@ If any dependencies are indicated, then it is required to configure the ArgoCD p
 
 - Jaeger
 
+See the related [page](InstallAddons.md) to know how to install the dependencies
+
 #### Preliminary steps
 
 Before Advocate will work you will need to create the related namespace
@@ -31,10 +33,10 @@ Now you can enter the required values. For the question about the "ADVOCATE_ETH_
 
 #### Tool deployment
 
-Be sure that the file [kustomization file](../deployment/mesh-infra/argocd/kustomization.yaml) used by argocd has the line ``- advocate`` uncommented. E.g.:
+Be sure that, **on the repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/plat-infra-services/kustomization.yaml) used by argocd has the line ``- advocate`` uncommented. E.g.:
 
 ```bash
-piVersion: kustomize.config.k8s.io/v1beta1
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
