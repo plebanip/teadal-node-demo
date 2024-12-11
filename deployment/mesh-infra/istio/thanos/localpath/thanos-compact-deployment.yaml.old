@@ -22,29 +22,18 @@ spec:
         image: thanosio/thanos:v0.32.2
         args:
         - compact
-        - --objstore.config-file=/etc/thanos/bucket.yml
+        - --objstore.config-file=/etc/thanos/thanos-config.yaml
         - --wait
         - --data-dir=/data
-        env:
-        - name: ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: access_key
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: secret_key
         volumeMounts:
-        - name: thanos-config
+        - name: thanos-config-volume
           mountPath: /etc/thanos
           readOnly: true
         - name: data
-          mountPath: /data
+          mountPath: /data # Monta il volume temporaneo nella directory /data
       volumes:
-      - name: thanos-config
+      - name: thanos-config-volume
         configMap:
-          name: thanos-bucket-config
+          name: thanos-config
       - name: data
-        emptyDir: {}
+        emptyDir: {} # Volume temporaneo per la directory /data

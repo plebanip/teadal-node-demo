@@ -8,13 +8,17 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels:
+    matchLabels: #matches the labels in template:
+      app.kubernetes.io/component: query-layer
+      app.kubernetes.io/instance: thanos-query
       app.kubernetes.io/name: thanos-query
   template:
     metadata:
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
       labels:
+        app.kubernetes.io/component: query-layer
+        app.kubernetes.io/instance: thanos-query
         app.kubernetes.io/name: thanos-query
     spec:
       containers:
@@ -22,23 +26,15 @@ spec:
         image: thanosio/thanos:v0.32.2
         args:
         - query
-        - --store=thanos-store:10901
-        env:
-        - name: ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: access_key
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: secret_key
+        - --query.auto-downsampling
+        - --query.partial-response
+        - --store=thanos-store.istio-system.svc.cluster.local:10901
+        - --store=thanos-sidecar.istio-system.svc.cluster.local:10901
         volumeMounts:
-        - name: thanos-config
+        - name: thanos-config-volume
           mountPath: /etc/thanos
           readOnly: true
       volumes:
-      - name: thanos-config
+      - name: thanos-config-volume
         configMap:
-          name: thanos-bucket-config
+          name: thanos-config

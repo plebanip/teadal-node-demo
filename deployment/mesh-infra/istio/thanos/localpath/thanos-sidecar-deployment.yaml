@@ -1,35 +1,109 @@
+---
+# Secret per credenziali MinIO (rimpiazza con i valori corretti base64)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-credentials
+type: Opaque
+data:
+  access_key: KN335GF5J0GA104HMH4S # base64 di 'ACCESS_KEY'
+  secret_key: RjLJSEHwPmgBtkDbuqoDiQ9E44UKl6F4NtOU1jpM # base64 di 'SECRET_KEY'
+
+---
+# ConfigMap con la configurazione del bucket per Thanos
+# Rimpiazza endpoint, bucket e credenziali se necessario
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thanos-bucket-config
+data:
+  bucket.yml: |
+    type: S3
+    config:
+      bucket: "thanos-bucket"
+      endpoint: "minio:9000"
+      access_key: "${ACCESS_KEY}"
+      secret_key: "${SECRET_KEY}"
+      insecure: true
+      signature_version2: false
+    prefix: ""
+
+---
+# Job per creare il bucket se non esiste
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-minio-bucket
+spec:
+  template:
+    spec:
+      containers:
+      - name: create-bucket
+        image: minio/mc:RELEASE.2023-06-23T18-12-07Z
+        env:
+        - name: ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: access_key
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: secret_key
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            mc alias set myminio http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 ${ACCESS_KEY} ${SECRET_KEY}
+            mc mb myminio/thanos-bucket || echo "Bucket già esistente."
+      restartPolicy: Never
+  backoffLimit: 1
+
+---
+# Deployment del Thanos Sidecar
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: thanos-sidecar
-  namespace: istio-system
-  labels:
-    app.kubernetes.io/name: thanos-sidecar
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: thanos-sidecar
+      app: thanos-sidecar
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/rewriteAppHTTPProbers: "true"
       labels:
-        app.kubernetes.io/name: thanos-sidecar
+        app: thanos-sidecar
     spec:
       containers:
       - name: thanos-sidecar
         image: thanosio/thanos:v0.32.2
         args:
-        - sidecar
-        - --tsdb.path=/prometheus
-        - --prometheus.url=http://10.152.183.187:9090
-        - --objstore.config-file=/etc/thanos/thanos-config.yaml
+          - sidecar
+          - --tsdb.path=/prometheus
+          - --prometheus.url=http://10.152.183.187:9090
+          - --objstore.config-file=/etc/thanos/bucket.yml
         volumeMounts:
-        - name: thanos-config-volume
+        - name: prometheus-data
+          mountPath: /var/prometheus
+        - name: thanos-config
           mountPath: /etc/thanos
-          readOnly: true
+        env:
+        - name: ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: access_key
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: secret_key
       volumes:
-      - name: thanos-config-volume
+      - name: thanos-config
         configMap:
-          name: thanos-config
+          name: thanos-bucket-config
+      # Questo volume dovrebbe essere quello condiviso da Prometheus,
+      # sostituire con la corretta definizione di volume o PVC.
+      - name: prometheus-data
+        emptyDir: {}

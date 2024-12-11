@@ -5,10 +5,10 @@ namespace: istio-system
 
 resources:
   # Base components di Thanos
-  - ./secrets/teadal-user-1.yaml
-  - ./localpath/thanos-pv.yaml
-  - ./localpath/pvc-thanos-store.yaml
-  - ./localpath/thanos-store-deployment.yaml
+  #- ./secrets/teadal-user-1.yaml
+  #- ./localpath/thanos-pv.yaml
+  #- ./localpath/pvc-thanos-store.yaml
+  #- ./localpath/thanos-store-deployment.yaml
 
   - ./localpath/thanos-query-deployment.yaml
 
@@ -16,7 +16,7 @@ resources:
   
   - ./localpath/thanos-compact-deployment.yaml
   
-  - ./localpath/thanos-rule-deployment.yaml
+  #- ./localpath/thanos-rule-deployment.yaml
 
 
 
@@ -27,6 +27,6 @@ patchesStrategicMerge:
 
 configMapGenerator:
   # Configurazioni per Thanos
-   - name: thanos-config
-     files:
-       - thanos-config.yaml
+  #- name: thanos-config
+  #files:
+  #- thanos-config.yaml
