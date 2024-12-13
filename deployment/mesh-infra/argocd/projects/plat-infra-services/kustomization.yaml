@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- postgres
-- kubeflow
-- airflow 
+# - postgres
+# - kubeflow
+# - airflow 
+# - advocate

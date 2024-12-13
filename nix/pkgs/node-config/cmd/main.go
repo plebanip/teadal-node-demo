@@ -55,9 +55,24 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:   "secrets",
-				Usage:  "set/reset all teadal node secrets",
-				Action: SecretCmd,
+				Name:   "basicnode-secrets",
+				Usage:  "set/reset secrets for basic teadal node installation",
+				Action: BasicNodeSecretCmd,
+			},
+			{
+				Name:   "postgres-secrets",
+				Usage:  "set/reset postgres secrets",
+				Action: PostgresSecretCmd,
+			},
+			{
+				Name:   "keycloak-secrets",
+				Usage:  "set/reset keycloak secrets",
+				Action: KeycloakSecretCmd,
+			},
+			{
+				Name:   "advocate",
+				Usage:  "configure advocate tool",
+				Action: AdvocateCmd,
 			},
 			{
 				Name:   "pv",
@@ -77,7 +92,7 @@ func main() {
 			return nil
 		},
 		Action: func(ctx *cli.Context) error {
-			return cli.ShowAppHelp(ctx)
+				return cli.ShowAppHelp(ctx)
 		},
 	}
 	if err := app.Run(os.Args); err != nil {

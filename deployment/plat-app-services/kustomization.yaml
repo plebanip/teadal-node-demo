@@ -6,5 +6,5 @@ commonLabels:
   zone: "sharing"
 resources:
 - httpbin/
-# - fdp-sync-dummy
-# - sfdp-sync-dummy
+- fdp-sync-dummy
+- sfdp-sync-dummy
