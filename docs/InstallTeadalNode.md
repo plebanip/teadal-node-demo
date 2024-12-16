@@ -83,6 +83,8 @@ Options:
 
 ## Step-by-step installation <a name="stepbystep-installation"/>
 
+If you want to install all the components manually, here after the complete set of commands.
+
 ### Setup the K8s cluster <a name="setup-cluster"/>
 
 #### Install MicroK8S <a name="microk8s"/>
