@@ -3,4 +3,5 @@ kind: Kustomization
 
 resources:
 # - tv-teadal
-- teadal-baseline
+#- teadal-baseline
+  - ip-10-205-143-198

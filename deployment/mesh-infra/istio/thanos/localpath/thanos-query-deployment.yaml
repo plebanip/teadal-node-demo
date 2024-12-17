@@ -22,7 +22,7 @@ spec:
         image: thanosio/thanos:v0.32.2
         args:
         - query
-        - --store=thanos-store:10901
+        - --store=thanos-sidecar:10901
         env:
         - name: ACCESS_KEY
           valueFrom:
@@ -34,6 +34,23 @@ spec:
             secretKeyRef:
               name: minio-credentials
               key: secret_key
+        ports:                       # Aggiunta configurazione delle porte
+        - name: http
+          containerPort: 10902
+        - name: grpc
+          containerPort: 10901
+        livenessProbe:               # Probe per verifica di salute
+          httpGet:
+            path: /-/healthy
+            port: 10902
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:              # Probe per verifica di prontezza
+          httpGet:
+            path: /-/ready
+            port: 10902
+          initialDelaySeconds: 10
+          periodSeconds: 10
         volumeMounts:
         - name: thanos-config
           mountPath: /etc/thanos

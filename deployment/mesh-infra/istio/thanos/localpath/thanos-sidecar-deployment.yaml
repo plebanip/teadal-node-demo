@@ -4,10 +4,13 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: minio-credentials
+  namespace: istio-system
 type: Opaque
 data:
-  access_key: KN335GF5J0GA104HMH4S # base64 di 'ACCESS_KEY'
-  secret_key: RjLJSEHwPmgBtkDbuqoDiQ9E44UKl6F4NtOU1jpM # base64 di 'SECRET_KEY'
+  #access_key: KN335GF5J0GA104HMH4S # base64 di 'ACCESS_KEY'
+  #secret_key: RjLJSEHwPmgBtkDbuqoDiQ9E44UKl6F4NtOU1jpM # base64 di 'SECRET_KEY'
+  access_key: LTXG5CVY0MXLE0WO75Q6 # base64 di 'ACCESS_KEY'
+  secret_key: IKxps9GTiPGBZaK6BRmeF434lGZCNx0XG3sa4PLE # base64 di 'SECRET_KEY'
 
 ---
 # ConfigMap con la configurazione del bucket per Thanos
@@ -16,6 +19,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: thanos-bucket-config
+  namespace: istio-system
 data:
   bucket.yml: |
     type: S3
@@ -34,6 +38,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-minio-bucket
+  namespace: istio-system
 spec:
   template:
     spec:
@@ -54,8 +59,8 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            mc alias set myminio http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 ${ACCESS_KEY} ${SECRET_KEY}
-            mc mb myminio/thanos-bucket || echo "Bucket già esistente."
+            mc alias set teadal http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 ${ACCESS_KEY} ${SECRET_KEY}
+            mc mb teadal/thanos-bucket || echo "Bucket già esistente."
       restartPolicy: Never
   backoffLimit: 1
 
@@ -65,6 +70,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: thanos-sidecar
+  namespace: istio-system
 spec:
   replicas: 1
   selector:
@@ -80,12 +86,13 @@ spec:
         image: thanosio/thanos:v0.32.2
         args:
           - sidecar
-          - --tsdb.path=/prometheus
-          - --prometheus.url=http://10.152.183.187:9090
+          - --tsdb.path=/data
+            #- --prometheus.url=http://10.152.183.187:9090
+          - --prometheus.url=http://prometheus:9090
           - --objstore.config-file=/etc/thanos/bucket.yml
         volumeMounts:
-        - name: prometheus-data
-          mountPath: /var/prometheus
+        - name: storage-volume
+          mountPath: /data
         - name: thanos-config
           mountPath: /etc/thanos
         env:
@@ -99,11 +106,27 @@ spec:
             secretKeyRef:
               name: minio-credentials
               key: secret_key
+        ports:
+        - name: grpc
+          containerPort: 10901
       volumes:
       - name: thanos-config
         configMap:
           name: thanos-bucket-config
       # Questo volume dovrebbe essere quello condiviso da Prometheus,
       # sostituire con la corretta definizione di volume o PVC.
-      - name: prometheus-data
+      - name: storage-volume
         emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-sidecar
+  namespace: istio-system
+spec:
+  selector:
+    app: thanos-sidecar
+  ports:
+    - name: grpc
+      port: 10901
+      targetPort: 10901

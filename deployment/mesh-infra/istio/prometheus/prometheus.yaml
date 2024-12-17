@@ -50,6 +50,17 @@ data:
       static_configs:
       - targets:
         - localhost:9090
+    - job_name: 'node-exporter'
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: node-exporter
+      - source_labels: [__address__]
+        regex: (.*):9100
+        replacement: $1:9100
+        target_label: __address__
     - job_name: kepler      # Add Kepler metrics to prometheus
       static_configs:
       - targets:
@@ -523,7 +534,7 @@ spec:
               mountPath: /etc/config
             - name: storage-volume
               mountPath: /data
-              subPath: ""
+                #subPath: ""
       dnsPolicy: ClusterFirst
       securityContext:
         fsGroup: 65534
