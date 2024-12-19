@@ -16,9 +16,9 @@ spec:
         port:
           number: 5432
   - match: 
-    - port: 8000
+    - port: 8011
     route:
     - destination:
         host: advocate.trust-plane.svc.cluster.local
         port:
-          number: 8000
+          number: 8011
