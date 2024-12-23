@@ -22,7 +22,7 @@ spec:
     - "*"
     port:
       name: advocate
-      number: 8000
+      number: 8011
       protocol: TCP 
   - hosts:
     - "*"
