@@ -3,7 +3,7 @@
 }:
 buildGoApplication {                                          # NOTE (1)
   pname = "node.config";
-  version = "0.1.6";
+  version = "0.1.7";
   src = ./cmd;
   pwd = ./cmd;
   modules = ./gomod2nix.toml;

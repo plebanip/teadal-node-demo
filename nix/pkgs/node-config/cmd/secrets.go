@@ -27,6 +27,18 @@ func createArgoRepoFrom(ctx context.Context, argoURL string, username string, to
 	return CreateOrUpdateSecretWithStruct(ctx, client, sec)
 }
 
+func createPostgresSecret(ctx context.Context, postgresPwd string, keycloakPwd string, client kubernetes.Interface) error {
+	sec := &core.Secret{}
+	sec.Name = "postgres-users"
+	sec.Namespace = "default"
+	sec.StringData = map[string]string{
+		"postgres.password": postgresPwd,
+		"keycloak.password": keycloakPwd,
+	}
+
+	return CreateOrUpdateSecretWithStruct(ctx, client, sec)
+}
+
 func createArgoSecretFromPassword(ctx context.Context, client kubernetes.Interface, pwd string) error {
 	currentTime := time.Now()
 	formattedTime := currentTime.UTC().Format("2006-01-02T15:04:05Z")

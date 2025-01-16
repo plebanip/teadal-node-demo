@@ -44,6 +44,14 @@ resources:
 - advocate
 ```
 
+Commit the changes to the repo, thus ArgoCD can fetch the updated configuration. Here an example of the possible list of command needed
+
+```bash
+git add deployment/mesh-infra/argocd/projects/plat-infra-services/
+git commit -m "enable catalogue
+git push
+```
+
 After few minutes, ArgoCD will realizes the update and starts deploying the related pods.
 
 
@@ -67,21 +75,59 @@ kubectl logs <advocate-pod-name> -n trust-plane
 
 ## Catalogue deployment <a name="catalog"/>
 
+The deployment of the TEADAL data catalogue requires an approval step. Who is interested in this tool must send an e-mail to XXXX@cefriel.com. In case of acceptance, gitlab credentials will be provided. These credentials are required to properly setup the environment for the deployment 
+
 #### Dependencies
 
-TBD
+Keycloak and Postgres
 
 #### Preliminary steps
 
-TBD
+Be sure that the VM on which the catalogue will be installed has a public IP, or it can be reached from the Web. 
+
+First step is to create the secrets to allow microk8s to pull the images from the repository
+
+```bash
+kubectl create secret docker-registry teadal-registry-secret -n catalogue \
+  --docker-server=https://registry.teadal.ubiwhere.com \
+  --docker-username=<gitlab username> \
+  --docker-password="<gitlab password>" \
+  --docker-email=<gitlab account email> 
+```
+
+In case the microk8s notifies that the namespace `catalogue` does not exist, the following command solves the issue:
+
+```bash
+kubectl create namespace catalogue
+```
+
 
 #### Tool deployment
 
-TBD
+Be sure that, **on the repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/plat-app-services/kustomization.yaml) used by argocd has the line ``- catalogue`` uncommented. E.g.:
+
+```bash
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- project.yaml
+- catalogue
+```
+
+Commit the changes to the repo, thus ArgoCD can fetch the updated configuration. Here an example of the possible list of command needed
+
+```bash
+git add deployment/mesh-infra/argocd/projects/plat-app-services/
+git commit -m "enable catalogue
+git push
+```
+
+After few minutes, ArgoCD will realizes the update and starts deploying the related pods.
 
 #### Checking installation
 
-TBD
+In a browser, open the page `http://<host>/catalogue`. A login page to access to the catalog will appear if everything is properly working.
 
 ## Policy manager <a name="policy"/>
 

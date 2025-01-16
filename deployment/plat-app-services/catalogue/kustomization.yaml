@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: catalogue
+resources:
+- namespace.yaml
+- kcong/blazegraph/blazegraph-deployment.yaml
+- kcong/blazegraph/blazegraph-volume.yaml
+- kcong/blazegraph/blazegraph-volume-claim.yaml
+- kcong/bpmn/bpmn-volume.yaml
+- kcong/bpmn/bpmn-volume-claim.yaml
+- kcong/bpmn/bpmn-deployment.yaml
+- kcong/bpmn/bpmn-service.yaml
+- kcong/minio/minio-deployment.yaml
+- kcong/minio/minio-service.yaml
+- kcong/minio/minio-volume-claim.yaml
+- kcong/minio/minio-volume.yaml
+- kcong/redis/redis-deployment.yaml
+- kcong/redis/redis-service.yaml
+- kcong/django/celerybeat-deployment.yaml
+- kcong/django/celeryworker-deployment.yaml
+- kcong/django/django-deployment.yaml
+- kcong/django/django-service.yaml
+- kcong/django/flower-deployment.yaml
+- kcong/postgres/postgres-backup-volume-claim.yaml
+- kcong/postgres/postgres-backup-volume.yaml
+- kcong/postgres/postgres-volume-claim.yaml
+- kcong/postgres/postgres-volume.yaml
+- kcong/postgres/postgres-service.yaml
+- kcong/postgres/postgres-deployment.yaml
+# - kcong/postgres_idp/postgres-backup-volume-claim.yaml
+# - kcong/postgres_idp/postgres-backup-volume.yaml
+# - kcong/postgres_idp/postgres-volume-claim.yaml
+# - kcong/postgres_idp/postgres-volume.yaml
+# - kcong/postgres_idp/postgres-service.yaml
+# - kcong/postgres_idp/postgres-deployment.yaml
+- kcong/nginx/nginx-deployment.yaml
+- kcong/nginx/nginx-service.yaml
+# - kcong/keycloak/
+
+
+
+
+configMapGenerator:
+- name: kcong-backend-options
+  envs:
+  - envs/local/django.env
+  - envs/local/minio.env
+  - envs/local/postgres.env

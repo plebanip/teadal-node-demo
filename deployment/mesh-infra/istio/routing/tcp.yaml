@@ -15,10 +15,24 @@ spec:
         host: postgres.default.svc.cluster.local
         port:
           number: 5432
-  - match: 
-    - port: 8011
+  - match:
+    - port: 9000
     route:
     - destination:
-        host: advocate.trust-plane.svc.cluster.local
+        host: minio.catalogue.svc.cluster.local
         port:
-          number: 8011
+          number: 9000
+  - match:
+    - port: 8000
+    route:
+    - destination:
+        host: nginx.catalogue.svc.cluster.local
+        port:
+          number: 8000
+  # - match: 
+  #   - port: 8000
+  #   route:
+  #   - destination:
+  #       host: advocate.trust-plane.svc.cluster.local
+  #       port:
+  #         number: 8000

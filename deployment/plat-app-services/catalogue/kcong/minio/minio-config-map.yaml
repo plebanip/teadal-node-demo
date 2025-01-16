@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envs--production--minio
+  labels:
+    io.kompose.service: celerybeat-envs--production--minio
+data:
+  MINIO_ACCESS_KEY: Q2947SCNVZ8UFNIUY4STZXDHGAGSRFA6N8BES7
+  MINIO_SECRET_KEY: a435uyfq3l65qwa4iugeau5yv3evnzu5vtayb75e6yqb
+  MINIO_ENABLE_HTTPS: "False"
+  MINIO_STORAGE_ENDPOINT: minio
+  MINIO_STORAGE_PORT: "9000"
+  MINIO_DOMAIN: minio.catalogue.svc.cluster.local:9000
+  MINIO_SERVER_URL: http://minio.catalogue.svc.cluster.local:9000
+  MINIO_ROOT_USER: admin
+  MINIO_ROOT_PASSWORD: XzUi7sLg*$og7A*s!bA^u2Dg
+
+
+  

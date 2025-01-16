@@ -19,12 +19,17 @@ func BasicNodeSecretCmd(ctx *cli.Context) error {
 	if err != nil { //failed to create keycloak password... find out why
 		return err
 	}
+	err = AskPostgresPassword(ctx.Context, clientset)
+	if err != nil { //failed to create postgres password... find out why
+		return err
+	}
+
 	err = PrepareArgoCd(ctx.Context, clientset)
 	if err != nil {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 func PostgresSecretCmd(ctx *cli.Context) error {
@@ -36,8 +41,8 @@ func PostgresSecretCmd(ctx *cli.Context) error {
 		return err
 	}
 	
-
-	return err
+	
+	return nil
 }
 
 func KeycloakSecretCmd(ctx *cli.Context) error {
@@ -49,17 +54,23 @@ func KeycloakSecretCmd(ctx *cli.Context) error {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 func AskPostgresPassword(ctx context.Context, client kubernetes.Interface) error {
-	pwd, err := askPassword("postgres admin account")
+	postgresPwd, err := askPassword("postgres admin account")
 	if err != nil {
 		return err
 	}
-	return CreateOrUpdateSecret(ctx, client, "default", "postgres-users", map[string]string{
-		"postgres.password": pwd,
-	}, map[string]string{})
+
+	keycloakPwd, err := askPassword("postgres keycloak account")
+	if err != nil {
+		return err
+	}
+
+	err = createPostgresSecret(ctx, postgresPwd, keycloakPwd, client)
+
+	return nil;
 }
 
 func AskKeycloakPassword(ctx context.Context, client kubernetes.Interface) error {

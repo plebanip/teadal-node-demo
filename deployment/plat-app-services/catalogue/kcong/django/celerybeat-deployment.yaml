@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: celerybeat
+  name: celerybeat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: celerybeat
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: celerybeat
+    spec:
+      containers:
+        - args:
+            - /start-celerybeat
+          image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_idp_django:productionv3
+          imagePullPolicy: Always
+          name: celerybeat
+          envFrom:
+            - configMapRef:
+                name: kcong-backend-options
+          resources: {}
+      imagePullSecrets:
+        - name: teadal-registry-secret
+      restartPolicy: Always
+status: {}

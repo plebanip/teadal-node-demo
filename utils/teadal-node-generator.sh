@@ -127,7 +127,7 @@ mv "$hostname_dir" "$repo_dir"/deployment/mesh-infra/storage/pv/local/
 file="$repo_dir""/deployment/mesh-infra/storage/pv/local/kustomization.yaml"
 kustomizationfile_dir="$repo_dir""/deployment/mesh-infra/storage/pv/local/"
 substring="\- <HOST_NAME>"
-replacement=`echo "- " $hostname_dir`
+replacement=`echo "-" $hostname_dir`
 
 # Check if the file exists
 if [ ! -f "$file" ]; then

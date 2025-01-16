@@ -12,6 +12,12 @@ spec:
       name: http
       number: 80
       protocol: HTTP
+  # - hosts:
+  #   - "*"
+  #   port:
+  #     name: http_catalogue
+  #     number: 8000
+  #     protocol: HTTP
   - hosts:
     - "*"
     port:
@@ -22,11 +28,17 @@ spec:
     - "*"
     port:
       name: advocate
-      number: 8011
+      number: 8000
       protocol: TCP 
   - hosts:
     - "*"
     port:
       name: kubeflow
       number: 3810
+      protocol: HTTP
+  - hosts:
+    - "*"
+    port:
+      name: catalogue-minio
+      number: 9000
       protocol: HTTP

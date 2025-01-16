@@ -37,8 +37,8 @@ metadata:
 spec:
   ports:
   - name: https
-    port: 8011 # advocatepie.default.svc.cluster.local
-    targetPort: 8011
+    port: 8000 # advocatepie.default.svc.cluster.local
+    targetPort: 8000
   selector:
     app: advocate
     
@@ -67,18 +67,18 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: advocate
-          image:  sepidmas/advocate_pie:demo #git.tu-berlin.de:5000/teadal/advocate_pie:demo
+          image: sepidmas/advocate_pie:feature-cluster
           ports:
-            - containerPort: 8011 #Expose advocate API to check that the system is running!
+            - containerPort: 8000 #Expose advocate API to check that the system is running!
               protocol: TCP
           imagePullPolicy: Always
           resources:
-            requests:
-              cpu: "1000m"
-              memory: "2Gi"
             limits:
-              cpu: "2000m"
-              memory: "4Gi"
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
         
           envFrom:
           - configMapRef:

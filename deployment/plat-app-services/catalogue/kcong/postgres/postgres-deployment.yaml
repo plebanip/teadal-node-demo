@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: postgres
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: postgres
+    spec:
+      initContainers:
+        - name: init-postgres
+          image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_db_init:productionv1
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
+                echo "Initializing database..."
+                cp -r /pg_data/* /var/lib/postgresql/data
+                chown -R 999:999 /var/lib/postgresql/data
+              else
+                echo "Database already initialized."
+              fi
+          volumeMounts:
+            - name: postgres-claim1
+              mountPath: /var/lib/postgresql/data
+          imagePullSecrets:
+            - name: regcred
+      containers:
+        - name: postgres
+          image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_db:productionv1
+          resources: {}
+          envFrom:
+            - configMapRef:
+                name: kcong-backend-options
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-claim1
+            - mountPath: /backups
+              name: postgres-claim2
+      imagePullSecrets:
+        - name: teadal-registry-secret
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+        - name: postgres-claim1
+          persistentVolumeClaim:
+            claimName: postgres-claim1
+        - name: postgres-claim2
+          persistentVolumeClaim:
+            claimName: postgres-claim2
+status: {}

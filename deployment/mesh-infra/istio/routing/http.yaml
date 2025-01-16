@@ -69,6 +69,78 @@ spec:
           host: airflow-webserver.airflow.svc.cluster.local
           port:
             number: 8080
+  - match:
+    - uri:
+        prefix: /catalogue/keycloak/
+    - uri:
+        prefix: /catalogue/keycloak
+    rewrite:
+      uri: /keycloak/
+    route:
+    - destination:
+        host: nginx.catalogue.svc.cluster.local
+        port:
+          number: 8000
+  - match:
+    - port: 9000
+      uri:
+        prefix: /admin
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: minio.catalogue.svc.cluster.local
+        port:
+          number: 9001
+
+  - match:
+    - port: 9000
+    route:
+    - destination:
+        host: minio.catalogue.svc.cluster.local
+        port:
+          number: 9000
+  - match:
+    - uri:
+        prefix: /fkNyAxuFOr3taStQb9tUFmFKd4HepRok/
+    - uri:
+        prefix: /fkNyAxuFOr3taStQb9tUFmFKd4HepRok
+    route:
+    - destination:
+        host: nginx.catalogue.svc.cluster.local
+        port:
+          number: 8000
+
+  - match:
+    - uri:
+        prefix: /catalogue/
+    - uri:
+        prefix: /catalogue
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: nginx.catalogue.svc.cluster.local
+        port:
+          number: 8000
+  # - match:
+  #   - uri:
+  #       prefix: /css/
+  #   - uri:
+  #       prefix: /js/
+  #   - uri:
+  #       prefix: /css
+  #   - uri:
+  #       prefix: /fonts/
+  #   - uri:
+  #       prefix: /fonts
+  #   - uri:
+  #       prefix: /js
+  #   route:
+  #   - destination:
+  #       host: nginx.catalogue.svc.cluster.local
+  #       port:
+  #         number: 8000
 
 # NOTE
 # 1. URL rewriting. We use overlapping prefixes to make sure `/x`, `/x/`

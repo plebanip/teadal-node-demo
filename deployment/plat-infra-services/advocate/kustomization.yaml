@@ -12,8 +12,8 @@ images:
 #- name: git.tu-berlin.de:5000/teadal/advocate_pie:dev
 #  newName: git.tu-berlin.de:5000/teadal/advocate_pie
 #  newTag: teadal-node-dev-0.2
-- name: sepidmas/advocate_pie:demo
-
+- name: sepidmas/advocate_pie:feature-cluster
+   
 patches:
 - target:
     kind: Deployment
@@ -33,31 +33,9 @@ configMapGenerator:
   # Please replace the following values with the actual values of your deployment ...
   - ADVOCATE_IPFS_CONNECTION=http://ipfs.trust-plane.svc.cluster.local:5001/api/v0/ # modify if you use your own
   - ADVOCATE_JAEGER_QUERY_ADDRESS=tracing.istio-system.svc.cluster.local:16685 # should be always this based on teadal node setup
-  - ADVOCATE_SELF_ADDRESSES=https://advocate.trust-plane.svc.cluster.local:8011,https://localhost:8011
-  - ADVOCATE_PUBLIC_ADDRESS=https://localhost:8011
-  # blockchain and documentstore:
+  - ADVOCATE_SELF_ADDRESSES=https://advocate.trust-plane.svc.cluster.local:8000,https://localhost:8000
+  - ADVOCATE_PUBLIC_ADDRESS=https://localhost:8000
   - ADVOCATE_ETH_POA=1
   - ADVOCATE_ETH_GAS_PRICE=0
-  - ADVOCATE_ETH_CHAINID=1337
-  - ADVOCATE_DOCUMENT_STORE_CONTRACT_ADDRESS=""
-  - ADVOCATE_DOCUMENT_STORE_CONTRACT_ABI_PATH=advocate/core/ethereum/contracts/DocumentStore.json
-  - ADVOCATE_ETH_REQUEST_KWARGS_VERIFY=false
-  - ADVOCATE_INSECURE_HTTPS=true
-  - ADVOCATE_DATABASE_URL=sqlite:///advocate.db
-  - ADVOCATE_DOCUMENT_STORE_NAME=TUB DS
-  # federation:
-  - ADVOCATE_FEDERATION_CONTRACT_ABI_PATH=advocate/core/ethereum/contracts/BaseFederation.json
-  - ADVOCATE_MOCKTNS_CONTRACT_ABI_PATH=advocate/core/ethereum/contracts/MockTNS.json
-  - ADVOCATE_ENS_CONTRACT_ADDRESS=0xbe7c8FD179f952a80BD7b6238BCE9EFD13ECF9BE
-  - ADVOCATE_FEDERATION_CONTRACT_ADDRESS=""
-  - ADVOCATE_APPROVAL_THRESHOLD=51
-  - ADVOCATE_FEDERATION_NAME=Test Federation
-  - ADVOCATE_FEDERATION_DESCRIPTION="This is a test federation"
-  - ADVOCATE_INITIAL_MEMBERS=""
-  # namespace and other settings:
-  - ADVOCATE_NAMESPACE_SELECTORS_ZONE=sharing,teadal,advocate-testing,default
-  - ADVOCATE_EVIDENCE_SOURCES_SOURCES=JaegerGRPC,Kubernetes
-  - ADVOCATE_TELEMETRY_INTERVAL=60
-  - ADVOCATE_IMAGE_VALIDATION_PUBLIC_KEY=""
 generatorOptions:
     disableNameSuffixHash: true

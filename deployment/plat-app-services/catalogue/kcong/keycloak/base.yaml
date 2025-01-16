@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: keycloak-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/data-keycloak
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-pvc-4
+  namespace: catalogue
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: keycloak
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: catalogue
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: cefriel/kcong-idp:production
+          args:
+            - start-dev
+            - --import-realm
+            - --cache=local
+            - --log-level=DEBUG
+          env:
+            # Use HTTP (we'll switch to HTTPs later on for pilot deployments)
+            # and build URLs of depending on host and port found in the request.
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HTTP2_ENABLED
+              value: "false"
+
+            - name: KEYCLOAK_PROXY
+              value: "edge"
+            - name: KC_HTTP_RELATIVE_PATH
+              value: /catalogue/keycloak/
+
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: CACHE_STACK
+              value: "local"
+
+            # NOTE this initial admin can only be used on first boot.
+            # In fact, Keycloak will create it in its DB only if it isn't
+            # there already. So the second time this pod restarts the user
+            # will be there and changing the password through the below env
+            # var will have no effect---you'll have to log onto Keycloak to
+            # change it. This is why we're not asking Reloader to monitor
+            # changes to this pod's linked secret.
+            - name: KEYCLOAK_ADMIN
+              value: "admin"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: "abc123"
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres-idp.catalogue.svc.cluster.local/keycloak
+            - name: KC_DB_USERNAME
+              value: keycloak
+            - name: KC_DB_PASSWORD
+              value: password
+
+          ports:
+            - name: http
+              containerPort: 8080
+          # - name: https
+          #   containerPort: 8443
+          readinessProbe:
+            httpGet:
+              path: /catalogue/keycloak/realms/master
+              port: 8080
+          volumeMounts:
+            - name: h2-volume
+              mountPath: /opt/catalogue-keycloak/data/h2/
+            - name: kcong-realm-bootstrap
+              mountPath: /opt/keycloak/data/import/kcong-bootstrap.json
+              subPath: kcong-bootstrap.json
+      volumes:
+        - name: h2-volume
+          persistentVolumeClaim:
+            claimName: keycloak-pvc-4
+        - name: kcong-realm-bootstrap
+          configMap:
+            name: kcong-realm-bootstrap

@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: django
+  name: django
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: django
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: django
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/django: unconfined
+    spec:
+      securityContext:
+        apparmorProfileName: unconfined
+      containers:
+        - args:
+            - /start
+          name: django
+          image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_idp_django:productionv3
+          imagePullPolicy: Always
+          resources: {}
+          envFrom:
+            - configMapRef:
+                name: kcong-backend-options
+      imagePullSecrets:
+        - name: teadal-registry-secret
+      restartPolicy: Always
+status: {}
