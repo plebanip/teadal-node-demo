@@ -48,7 +48,7 @@ Commit the changes to the repo, thus ArgoCD can fetch the updated configuration.
 
 ```bash
 git add deployment/mesh-infra/argocd/projects/plat-infra-services/
-git commit -m "enable catalogue
+git commit -m "enable advocate"
 git push
 ```
 
@@ -119,7 +119,7 @@ Commit the changes to the repo, thus ArgoCD can fetch the updated configuration.
 
 ```bash
 git add deployment/mesh-infra/argocd/projects/plat-app-services/
-git commit -m "enable catalogue
+git commit -m "enable catalogue"
 git push
 ```
 
