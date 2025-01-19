@@ -36,6 +36,8 @@ spec:
         - "/airflow/*"
         - "/catalogue"
         - "/catalogue/*"
+        - "/dspn-webeditor"
+        - "/dspn-webeditor/*"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok/*"
         - "/css"
@@ -50,3 +52,4 @@ spec:
         - "9001"
         - "80"
         - "8000"
+        - "3000"
