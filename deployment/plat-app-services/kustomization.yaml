@@ -7,6 +7,7 @@ commonLabels:
 resources:
 - httpbin/
 - catalogue/
+- dspn-webeditor
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
  

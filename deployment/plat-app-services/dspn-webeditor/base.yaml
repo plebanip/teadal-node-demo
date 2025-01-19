@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: dspn-webeditor
+  name: dspn-webeditor
+spec:
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: dspn-webeditor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dspn-webeditor
+  name: dspn-webeditor
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dspn-webeditor
+  template:
+    metadata:
+      labels:
+        app: dspn-webeditor
+    spec:
+      containers:
+        - name: dspn-webeditor
+          image: registry.teadal.ubiwhere.com/teadal-public-images/dspn-webeditor
+          ports:
+          - containerPort: 3000
+          #env: 
+          #- name: MINIO_HOST
+          #  value: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local"          
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: "dspn-webeditor-virtual-service"
+spec:
+  gateways:
+  - "teadal-gateway"
+  hosts:
+  - "*"
+  http:
+  - match:
+    - uri:
+        prefix: /dspn-webeditor/
+    - uri:
+        prefix: /fdspn-webeditor
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: dspn-webeditor.default.svc.cluster.local
+        port:
+          number: 3000
+
