@@ -56,7 +56,7 @@ spec:
     - uri:
         prefix: /dspn-webeditor/
     - uri:
-        prefix: /fdspn-webeditor
+        prefix: /dspn-webeditor
     rewrite:
       uri: /
     route:
