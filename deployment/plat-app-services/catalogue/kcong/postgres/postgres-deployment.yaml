@@ -19,7 +19,7 @@ spec:
     spec:
       initContainers:
         - name: init-postgres
-          image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_db_init:productionv1
+          image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_db_init:teadalk8s
           command:
             - sh
             - -c
