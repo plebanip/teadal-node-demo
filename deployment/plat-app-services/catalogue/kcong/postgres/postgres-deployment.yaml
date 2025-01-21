@@ -39,6 +39,7 @@ spec:
       containers:
         - name: postgres
           image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_db:productionv1
+          imagePullPolicy: Always
           resources: {}
           envFrom:
             - configMapRef:
