@@ -9,6 +9,7 @@ This document provides a guide to install common tools that are pre-requisites f
 - [PostgresSQL](#postgres)
 - [Airflow](#airflow)
 
+Once changed the kustomization file, remember to push the modification to the repo to inform ArgoCD about the new configuration.
 
 ### Jaeger <a name="jaeger"/>
 

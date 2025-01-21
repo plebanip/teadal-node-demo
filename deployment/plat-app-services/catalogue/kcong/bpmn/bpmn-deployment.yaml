@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: bpmn
+  name: bpmn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: bpmn
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: bpmn
+    spec:
+      containers:
+      - image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_bpmn:productionv1
+        name: bpmn
+        resources: {}
+        volumeMounts:
+        - mountPath: /process_engine/data
+          name: bpmn-claim0
+      imagePullSecrets:
+        - name: teadal-registry-secret
+      restartPolicy: Always
+      volumes:
+      - name: bpmn-claim0
+        persistentVolumeClaim:
+          claimName: bpmn-claim0
+status: {}

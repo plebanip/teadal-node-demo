@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: nginx
+    spec:
+      containers:
+        - image: registry.teadal.ubiwhere.com/teadal-public-images/asset_manager_ui:dev
+          name: bpmn
+          resources: {}
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: teadal-registry-secret
+      restartPolicy: Always
+status: {}

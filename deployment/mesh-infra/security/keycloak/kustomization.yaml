@@ -5,6 +5,11 @@ resources:
 - base.yaml
 
 configMapGenerator:
-- name: teadal-realm-bootstrap
+#- name: kcong-realm-bootstrap
+#  files:
+#  - kcong-bootstrap.json
+- name: keycloak-configmap
   files:
+  - kcong-bootstrap.json
   - teadal-bootstrap.json
+

@@ -8,13 +8,15 @@ We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 10
 - [Setup the environment](#setup-environment)
   - [Git repo](#git-repo)
   - [Nix](#nix)
-- [Setup the K8s cluster](#setup-cluster)
-  - [Install MicroK8S](#microk8s)
-  - [K8s storage](#k8sstorage)
-- [Setup the network](#setup-network)
-- [Setup the mesh](#setup-mesh)
-  - [Istio](#istio)
-  - [ArgoCD](#argocd)
+- [Quick installation](#quick-installation)
+- [Step-by-step installation](#stepbystep-installation)
+  - [Setup the K8s cluster](#setup-cluster)
+    - [Install MicroK8S](#microk8s)
+    - [K8s storage](#k8sstorage)
+  - [Setup the network](#setup-network)
+  -  [Setup the mesh](#setup-mesh)
+    - [Istio](#istio)
+    - [ArgoCD](#argocd)
 - [Checking the installation](#checking-installation)
 - [Next steps](#next-steps)
 
@@ -65,9 +67,27 @@ it should return something like ``argocd: v2.7.6``
 
 Now all the command must be executed inside the Nix shell.
 
-## Setup the K8s cluster <a name="setup-cluster"/>
+## Quick installation <a name="quick-installation"/>
 
-### Install MicroK8S <a name="microk8s"/>
+If you want to quickly install the Teadal node from scratch, after setting up the machine with the instructions described before, there is `tedal-node-generator.sh` script.
+
+```bash
+Usage: ./teadal-node-generator.sh [OPTIONS] repoURL
+Mandatory parameters:
+  -d <repo_dir>     Specify the directory with the repo clone
+  -r <repo_url>     Specify the repoURL
+Options:
+  -b <branch>       Specify a branch
+  -h                Display this help message
+```
+
+## Step-by-step installation <a name="stepbystep-installation"/>
+
+If you want to install all the components manually, here after the complete set of commands.
+
+### Setup the K8s cluster <a name="setup-cluster"/>
+
+#### Install MicroK8S <a name="microk8s"/>
 
 We'll use MicroK8s as a cluster manager and orchestration. Install MicroK8s (upstream Kubernetes 1.27)
 
@@ -159,7 +179,7 @@ Now, make **`$dir$/deployment/`** your current dir. If you are in the ``nix`` di
  cd ../deployment
  ```
 
-### K8s storage <a name="k8sstorage"/>
+#### K8s storage <a name="k8sstorage"/>
 
 There are various ways to handle storage on a TEADAL node. In this guide, we will describe how to set up local storage manually. For single node solutions this is a easy way to quickly provide some storage for your pods.
 When adding more nodes, we may require different solutions (distributed storage), but lets not worry 
@@ -226,7 +246,7 @@ initialize in the next steps.
 
 
 
-## Setup the network <a name="setup-network"/>
+### Setup the network <a name="setup-network"/>
 
 The mesh we're going to roll out needs to be connected to some ports
 on the external network. Clients on the external network hit port `80`
@@ -249,9 +269,9 @@ there's no firewall. In a public cloud scenario, e.g. AWS, you
 typically have an admin console that lets you easily make ports
 available to clients out in the interwebs.
 
-## Setup the mesh <a name="setup-mesh"/>
+### Setup the mesh <a name="setup-mesh"/>
 
-### Istio <a name="istio"/>
+#### Istio <a name="istio"/>
 
 Don't install Istio as a MicroK8s add-on, since MicroK8s will install an old version! For this reason, it is required to follow the following procedure
 
@@ -283,9 +303,9 @@ kubectl get pod -A
 
 ![screenshot](./images/microk8s-2.png)
 
-### ArgoCD  <a name="argocd"/>
+#### ArgoCD  <a name="argocd"/>
 
-#### Connection with the repo
+##### Connection with the repo
 To allow ArgoCD to be aligned with the gitlab repo you have to edit the app.yaml file
 
 ```bash
@@ -313,7 +333,7 @@ spec:
 If you encouter some problems during the istio installation, maybe it is a matter of network configuration. Be sure that all the ports indicated above have been open.
 
 
-#### Argo CD deployment
+##### Argo CD deployment
 
 Argo CD is our declarative continuous delivery engine. Except for
 the things listed in this bootstrap procedure, we declare the cluster
@@ -389,7 +409,7 @@ After sometime this command returns the basic set of pods up and running.
 
 You can notice that two pods do not run properly. To make everything working, we need the last step, the configuration of the secrets also to allow ArgoCD to fecth the repo.
 
-### Basic secrets <a name="basic-secrets"/>
+#### Basic secrets <a name="basic-secrets"/>
 
 <!--```bash
 kubectl apply -f mesh-infra/argocd/namespace.yaml
