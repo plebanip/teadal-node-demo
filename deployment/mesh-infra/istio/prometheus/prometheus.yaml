@@ -38,8 +38,8 @@ data:
       scrape_interval: 15s
       scrape_timeout: 10s
       external_labels:
-        cluster: "teadal-node" # un nome univoco per il cluster
-        prometheus: "main"     # un nome univovo per questa istanza di Prometheus
+        cluster: "teadal-node" # unique name for the cluster
+        prometheus: "main"     # unique name for the prometheus instance
     rule_files:
     - /etc/config/recording_rules.yml
     - /etc/config/alerting_rules.yml
