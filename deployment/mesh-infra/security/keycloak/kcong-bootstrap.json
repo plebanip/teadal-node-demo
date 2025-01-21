@@ -4480,7 +4480,7 @@
     "oauth2DeviceCodeLifespan": "600",
     "parRequestUriLifespan": "60",
     "clientSessionMaxLifespan": "0",
-    "frontendUrl": "https://kcong.cefriel.com:8085/keycloak/",
+    "frontendUrl": "http://baseline.teadal.ubiwhere.com/keycloak",
     "acr.loa.map": "{}"
   },
   "keycloakVersion": "23.0.3",
