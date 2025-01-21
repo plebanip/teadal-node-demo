@@ -97,7 +97,7 @@ spec:
       uri:
         prefix: /dspn-webeditor
     rewrite:
-      uri: /
+      uri: /dspn-webeditor
     route:
     - destination:
         host: dspn-webeditor.svc.cluster.local
