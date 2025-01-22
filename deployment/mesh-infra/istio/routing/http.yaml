@@ -92,15 +92,16 @@ spec:
         host: minio.catalogue.svc.cluster.local
         port:
           number: 9001
-  - match:
-    - port: 3000
-      uri:
+  - match:  # NOTE (1)
+    - uri:
+        prefix: /dspn-webeditor/
+    - uri:
         prefix: /dspn-webeditor
-    rewrite:
-      uri: /dspn-webeditor
+    #rewrite:
+    #  uri: /
     route:
     - destination:
-        host: dspn-webeditor.svc.cluster.local
+        host: dspn-webeditor.default.svc.cluster.local
         port:
           number: 3000
   - match:
