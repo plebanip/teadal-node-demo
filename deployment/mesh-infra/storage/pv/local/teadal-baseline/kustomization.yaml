@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- teadal-baseline-1.yaml
+- teadal-baseline-2.yaml
+- teadal-baseline-3.yaml
+- teadal-baseline-4.yaml
+- teadal-baseline-5.yaml
+- teadal-baseline-6.yaml
+- teadal-baseline-7.yaml
+- teadal-baseline-8.yaml
+- teadal-baseline-9.yaml

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-compact
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: thanos-compact
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos-compact
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        app.kubernetes.io/name: thanos-compact
+    spec:
+      containers:
+      - name: thanos-compact
+        image: thanosio/thanos:v0.32.2
+        args:
+        - compact
+        - --objstore.config-file=/etc/thanos/bucket.yml
+        - --wait
+        - --data-dir=/data
+        env:
+        - name: ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: access_key
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: secret_key
+        volumeMounts:
+        - name: thanos-config
+          mountPath: /etc/thanos
+          readOnly: true
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: thanos-config
+        configMap:
+          name: thanos-bucket-config
+      - name: data
+        emptyDir: {}

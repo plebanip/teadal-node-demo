@@ -6,5 +6,6 @@ resources:
 - jaeger/
 - kiali/
 - prometheus/
+- thanos/
 - routing/
 # - skywalking/

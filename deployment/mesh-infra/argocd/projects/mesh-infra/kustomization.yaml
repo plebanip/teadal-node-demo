@@ -13,6 +13,7 @@ resources:
 - minio
 - opa
 - prometheus
+- thanos
 - pvc
 - reloader
 - routing

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-query
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: thanos-query
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos-query
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        app.kubernetes.io/name: thanos-query
+    spec:
+      containers:
+      - name: thanos-query
+        image: thanosio/thanos:v0.32.2
+        args:
+        - query
+        - --store=thanos-sidecar:10901
+        env:
+        - name: ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: access_key
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-credentials
+              key: secret_key
+        ports:                       #  added ports configurations
+        - name: http
+          containerPort: 10902
+        - name: grpc
+          containerPort: 10901
+        livenessProbe:               # Probe for health verification 
+          httpGet:
+            path: /-/healthy
+            port: 10902
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:              # Probe for health verification
+          httpGet:
+            path: /-/ready
+            port: 10902
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: thanos-config
+          mountPath: /etc/thanos
+          readOnly: true
+      volumes:
+      - name: thanos-config
+        configMap:
+          name: thanos-bucket-config

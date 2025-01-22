@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-store
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: thanos-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos-store
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      labels:
+        app.kubernetes.io/name: thanos-store
+    spec:
+      containers:
+      - name: thanos-store
+        image: thanosio/thanos:v0.32.2
+        args:
+        - store
+        - --objstore.config-file=/etc/thanos/thanos-config.yaml
+        - --index-cache-size=2GB
+        - --chunk-pool-size=2GB
+        volumeMounts:
+        - name: thanos-config-volume
+          mountPath: /etc/thanos
+          readOnly: true
+        - name: data-cache
+          mountPath: /data
+        resources:
+          requests:
+            memory: "3Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 10902
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: 10902
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: thanos-config-volume
+        configMap:
+          name: thanos-config
+      - name: data-cache
+        persistentVolumeClaim:
+          claimName: data-thanos-store-0
+      nodeSelector:
+        kubernetes.io/hostname: teadal-baseline
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-bucket
+  namespace: istio-system 
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      initContainers:
+      - name: wait-for-minio
+        image: busybox
+        command: ["sh", "-c", "until nc -zv teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local 9000; do echo 'Waiting for MinIO...'; sleep 5; done"]
+      containers:
+      - name: mc
+        image: minio/mc:RELEASE.2023-06-23T18-12-07Z
+        env:
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_SECRET_KEY
+        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/teadal-thanos || echo 'Bucket creation failed or already exists'"]
+      restartPolicy: Never
