@@ -6,7 +6,6 @@ This document provides a guide to install common tools that are pre-requisites f
 - [Kepler](#kepler)
 - [Kiali](#kiali)
 - [Grafana](#grafana)
-- [PostgresSQL](#postgres)
 - [Airflow](#airflow)
 
 Once changed the kustomization file, remember to push the modification to the repo to inform ArgoCD about the new configuration.
@@ -73,26 +72,9 @@ resources:
 ...
 ```
 
-
-
-### PostgresSQL <a name="postgres"/>
-
-Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/kustomization.yaml) used by argocd has the line ``- postgres`` uncommented. E.g.:
-
-```bash
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-- project.yaml
-...
-- postgres
-...
-```
-
 ### Airflow <a name="airflow"/>
 
-Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/kustomization.yaml) used by argocd has the line ``- airflow`` uncommented. E.g.:
+Be sure that, **on your repo** the [kustomization file](../deployment/mesh-infra/argocd/projects/plat-infra-services/kustomization.yaml) used by argocd has the line ``- airflow`` uncommented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
