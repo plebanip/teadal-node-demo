@@ -40,6 +40,7 @@ metadata:
   name: create-minio-bucket
   namespace: istio-system
 spec:
+  ttlSecondsAfterFinished: 100
   template:
     spec:
       containers:
