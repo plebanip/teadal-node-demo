@@ -6,5 +6,5 @@ resources:
 - httpbin
 # - catalogue
 - dspn-webeditor
-# - fdp-sync-dummy
+- fdp-sync-dummy
 # - sfdp-sync-dummy

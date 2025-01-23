@@ -103,5 +103,4 @@ data:
 kind: Secret
 metadata:
   creationTimestamp: null
-  name: teadal-user-1
-  namespace: default #this to allow fdp to use minio
+  name: teadal-user-1 #this to allow fdp to use minio
