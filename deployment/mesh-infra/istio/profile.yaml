@@ -106,6 +106,10 @@ spec:
               nodePort: 9000
               targetPort: 9000
               name: catalogue-minio
+            - port: 3000
+              nodePort: 3000
+              targetPort: 3000
+              name: dspn-webeditor
             - port: 31400
               targetPort: 31400
               name: tcp

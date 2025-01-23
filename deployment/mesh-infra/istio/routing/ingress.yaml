@@ -42,3 +42,9 @@ spec:
       name: catalogue-minio
       number: 9000
       protocol: HTTP
+  - hosts:
+    - "*"
+    port:
+      name: dspn-webeditor
+      number: 3000
+      protocol: HTTP

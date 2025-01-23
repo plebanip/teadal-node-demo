@@ -7,7 +7,7 @@ spec:
   project: mesh-infra
   source:
     repoURL: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node.git
-    targetRevision: HEAD
+    targetRevision: add_dspn_webeditor
     path: deployment/mesh-infra/app
   destination:
     server: https://kubernetes.default.svc
