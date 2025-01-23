@@ -46,12 +46,12 @@ spec:
       - name: create-bucket
         image: minio/mc:RELEASE.2023-06-23T18-12-07Z
         env:
-        - name: ACCESS_KEY
+          - name: ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
                 key: CONSOLE_ACCESS_KEY
-        - name: SECRET_KEY
+          - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
@@ -96,12 +96,12 @@ spec:
         - name: thanos-config
           mountPath: /etc/thanos
         env:
-        - name: ACCESS_KEY
+          - name: ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
                 key: CONSOLE_ACCESS_KEY
-        - name: SECRET_KEY
+          - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1

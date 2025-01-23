@@ -26,12 +26,12 @@ spec:
         - --wait
         - --data-dir=/data
         env:
-        - name: ACCESS_KEY
+          - name: ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
                 key: CONSOLE_ACCESS_KEY
-        - name: SECRET_KEY
+          - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1

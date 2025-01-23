@@ -24,12 +24,12 @@ spec:
         - query
         - --store=thanos-sidecar:10901
         env:
-        - name: ACCESS_KEY
+          - name: ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
                 key: CONSOLE_ACCESS_KEY
-        - name: SECRET_KEY
+          - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
