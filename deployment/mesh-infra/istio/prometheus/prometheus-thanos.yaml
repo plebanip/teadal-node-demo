@@ -37,6 +37,9 @@ data:
       evaluation_interval: 1m
       scrape_interval: 15s
       scrape_timeout: 10s
+      external_labels:
+        cluster: "teadal-node" # unique name for the cluster
+        prometheus: "main"     # unique name for the prometheus instance
     rule_files:
     - /etc/config/recording_rules.yml
     - /etc/config/alerting_rules.yml
@@ -47,6 +50,17 @@ data:
       static_configs:
       - targets:
         - localhost:9090
+    - job_name: 'node-exporter'
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: node-exporter
+      - source_labels: [__address__]
+        regex: (.*):9100
+        replacement: $1:9100
+        target_label: __address__
     - job_name: kepler      # Add Kepler metrics to prometheus
       static_configs:
       - targets:
@@ -483,12 +497,14 @@ spec:
           image: "prom/prometheus:v2.41.0"
           imagePullPolicy: "IfNotPresent"
           args:
-            - --storage.tsdb.retention.time=15d
+            - --storage.tsdb.retention.time=2h
             - --config.file=/etc/config/prometheus.yml
             - --storage.tsdb.path=/data
             - --web.console.libraries=/etc/prometheus/console_libraries
             - --web.console.templates=/etc/prometheus/consoles
             - --web.enable-lifecycle
+            - --storage.tsdb.min-block-duration=2h
+            - --storage.tsdb.max-block-duration=2h
           ports:
             - containerPort: 9090
           readinessProbe:
@@ -518,7 +534,7 @@ spec:
               mountPath: /etc/config
             - name: storage-volume
               mountPath: /data
-              subPath: ""
+                #subPath: ""
       dnsPolicy: ClusterFirst
       securityContext:
         fsGroup: 65534
