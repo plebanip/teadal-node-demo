@@ -27,15 +27,15 @@ spec:
         - --data-dir=/data
         env:
         - name: ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: access_key
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_ACCESS_KEY
         - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: secret_key
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_SECRET_KEY
         volumeMounts:
         - name: thanos-config
           mountPath: /etc/thanos

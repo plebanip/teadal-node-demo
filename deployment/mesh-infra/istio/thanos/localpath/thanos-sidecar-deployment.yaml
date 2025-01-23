@@ -1,17 +1,17 @@
----
+#---
 # Secret for MinIO credential (replace with base64 correct values)
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minio-credentials
-  namespace: istio-system
-type: Opaque
-data:
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: minio-credentials
+#  namespace: istio-system
+#type: Opaque
+#data:
   #access_key: KN335GF5J0GA104HMH4S # base64 di 'ACCESS_KEY'
   #secret_key: RjLJSEHwPmgBtkDbuqoDiQ9E44UKl6F4NtOU1jpM # base64 of 'SECRET_KEY'
-  access_key: LTXG5CVY0MXLE0WO75Q6 # base64 di 'ACCESS_KEY'
-  secret_key: IKxps9GTiPGBZaK6BRmeF434lGZCNx0XG3sa4PLE # base64 of 'SECRET_KEY'
-
+#  access_key: LTXG5CVY0MXLE0WO75Q6 # base64 di 'ACCESS_KEY'
+#  secret_key: IKxps9GTiPGBZaK6BRmeF434lGZCNx0XG3sa4PLE # base64 of 'SECRET_KEY'
+#
 ---
 # ConfigMap with Tahnos bucket configuration
 # Replace endpoint, bucket and credentials if necessary 
@@ -26,8 +26,8 @@ data:
     config:
       bucket: "thanos-bucket"
       endpoint: "minio:9000"
-      access_key: "${ACCESS_KEY}"
-      secret_key: "${SECRET_KEY}"
+      access_key: "$ACCESS_KEY"
+      secret_key: "$SECRET_KEY"
       insecure: true
       signature_version2: false
     prefix: ""
@@ -47,20 +47,20 @@ spec:
         image: minio/mc:RELEASE.2023-06-23T18-12-07Z
         env:
         - name: ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: access_key
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_ACCESS_KEY
         - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: secret_key
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_SECRET_KEY
         command: ["/bin/sh", "-c"]
         args:
           - |
-            mc alias set teadal http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 ${ACCESS_KEY} ${SECRET_KEY}
-            mc mb teadal/thanos-bucket || echo "Bucket already exist."
+            mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $ACCESS_KEY $SECRET_KEY
+            mc mb rawdata/thanos-bucket || echo "Bucket already exist."
       restartPolicy: Never
   backoffLimit: 1
 
@@ -97,15 +97,15 @@ spec:
           mountPath: /etc/thanos
         env:
         - name: ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: access_key
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_ACCESS_KEY
         - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-credentials
-              key: secret_key
+            valueFrom:
+              secretKeyRef:
+                name: teadal-user-1
+                key: CONSOLE_SECRET_KEY
         ports:
         - name: grpc
           containerPort: 10901
