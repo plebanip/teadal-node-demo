@@ -3,7 +3,7 @@ kind: Kustomization
 
 
 resources:
-- prometheus.yaml
+#- prometheus.yaml
 - node-exporter-daemonset.yaml
-#- prometheus-thanos.yaml
+- prometheus-thanos.yaml
 #- https://raw.githubusercontent.com/istio/istio/1.18.0/samples/addons/prometheus.yaml
