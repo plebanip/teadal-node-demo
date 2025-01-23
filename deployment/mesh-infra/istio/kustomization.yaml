@@ -5,7 +5,7 @@ resources:
 - grafana/
 - jaeger/
 - kiali/
-# - prometheus/
+- prometheus/
 # - thanos/
 - routing/
 # - skywalking/
