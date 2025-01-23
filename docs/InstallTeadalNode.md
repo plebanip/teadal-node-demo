@@ -581,6 +581,32 @@ Now you should check out how we secure data products. Our setup ain't
 exactly straightforward, so to make sense of the examples below you
 should probably first read about [our security architecture][sec],
 at least the conceptual model section.-->
+A first check concerning the installation can be done looking at the result of the command ``kubectl get pod -A`` that must return this set of pods
+
+```
+NAMESPACE        NAME                                                READY   STATUS    RESTARTS        AGE
+argocd           argocd-application-controller-0                     1/1     Running   0               6m17s
+argocd           argocd-applicationset-controller-7786cb7547-s8g9g   1/1     Running   0               6m17s
+argocd           argocd-dex-server-58574dff5f-7jbh8                  1/1     Running   2 (5m45s ago)   6m17s
+argocd           argocd-notifications-controller-7764bb774d-5j5k6    1/1     Running   0               6m17s
+argocd           argocd-redis-77bf5b886-xdqjx                        1/1     Running   0               6m17s
+argocd           argocd-repo-server-5b9977b575-vzxhx                 1/1     Running   0               6m17s
+argocd           argocd-server-6485ccb9c9-hd956                      1/1     Running   2 (5m50s ago)   6m17s
+default          dspn-webeditor-678fc7d7c6-xs57j                     2/2     Running   0               5m31s
+default          httpbin-fcf5d6d59-hxbpt                             2/2     Running   0               5m31s
+default          keycloak-7978b4f4b7-5zrw9                           2/2     Running   0               2m54s
+default          opa-7f5bdf49c-nnl9k                                 2/2     Running   0               5m31s
+default          postgres-7f9949bcff-c2tq7                           2/2     Running   0               2m54s
+istio-system     istio-egressgateway-69cbcfc4d-bkzbk                 1/1     Running   0               6m39s
+istio-system     istio-ingressgateway-68ccf88c86-4g7q7               1/1     Running   0               6m39s
+istio-system     istiod-94c7678f6-skplp                              1/1     Running   0               6m51s
+kube-system      coredns-7745f9f87f-2bq8n                            1/1     Running   0               8m6s
+kube-system      reloader-75f99865b5-cqprw                           1/1     Running   0               5m31s
+minio-operator   console-756f85dc86-25ds4                            1/1     Running   0               5m29s
+minio-operator   minio-operator-7dbf54467d-tt2wk                     1/1     Running   0               5m29s
+minio-operator   teadal-teadal-0                                     2/2     Running   0               4m43s
+```
+
 
 To check if the basic installation is up and running, we'll use HttbBin to simulate a data product. There's a [policy][httpbin-rbac]
 that defines two roles:
