@@ -128,7 +128,7 @@ resources:
 ...
 ```
 
-Then, the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/prometheus/kustomization.yaml) has the line ``- prometheus`` uncommented, while the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` commented. E.g.:
+Then, the [kustomization file](../deployment/mesh-infra/istio/prometheus/kustomization.yaml) has the line ``- prometheus`` uncommented, while the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` commented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -160,7 +160,7 @@ resources:
 ...
 ```
 
-Then, the [kustomization file](../deployment/mesh-infra/argocd/projects/mesh-infra/prometheus/kustomization.yaml) has the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` uncommented, while the line ``- prometheus`` commented. E.g.:
+Then, the [kustomization file](../deployment/mesh-infra/istio/prometheus/kustomization.yaml) has the lines ``- prometheus-thanos`` and ``- node-exporter-daemonset.yaml`` uncommented, while the line ``- prometheus`` commented. E.g.:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
