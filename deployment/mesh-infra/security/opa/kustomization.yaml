@@ -1,18 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+#secretGenerator:
+#- name: basic-teadal-bundle
+#  files:
+#    - bundles/basic-teadal-bundle.tar.gz
+
 resources:
 - ingress-policy.yaml
 - opa-envoy-plugin.yaml
 
 secretGenerator:
-  - name: basic-teadal-bundle
-    files:
-      - bundles/basic-teadal-bundle.tar.gz
-
-#secretGenerator:
-#- name: opa-policy
-#  files:
+- name: opa-policy
+  files:
+  - bundles/basic-teadal-bundle.tar.gz
 #  - rego/main.rego
 #  - authnz.envopa.rego=rego/authnz/envopa.rego
 #  - authnz.http.rego=rego/authnz/http.rego
