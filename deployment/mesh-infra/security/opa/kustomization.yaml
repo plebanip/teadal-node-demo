@@ -5,6 +5,11 @@ resources:
 - ingress-policy.yaml
 - opa-envoy-plugin.yaml
 
+secretGenerator:
+  - name: basic-teadal-bundle
+    files:
+      - bundles/basic-teadal-bundle.tar.gz
+
 #secretGenerator:
 #- name: opa-policy
 #  files:

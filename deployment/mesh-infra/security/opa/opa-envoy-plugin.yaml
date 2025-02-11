@@ -39,15 +39,13 @@ spec:
                 key: CONSOLE_SECRET_KEY
         volumeMounts:
           - name: data-volume
-            mountPath: /tmp/basic-teadal-bundle.tar.gz
-            subPath: basic-teadal-bundle.tar.gz
+            mountPath: /tmp
         command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/opa-policy-bundles && mc --insecure cp /tmp/basic-teadal-bundle.tar.gz rawdata/opa-policy-bundles/basic-teadal-bundle.tar.gz"]
       restartPolicy: Never
       volumes:
        - name: data-volume
-         hostPath:
-           path: ./bundles
-           type: Directory
+          secret:
+            secretName: basic-teadal-bundle
 ---
 kind: Deployment
 apiVersion: apps/v1
