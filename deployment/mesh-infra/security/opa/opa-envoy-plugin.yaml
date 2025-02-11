@@ -46,7 +46,7 @@ spec:
       volumes:
        - name: data-volume
          hostPath:
-           path: bundles
+           path: ./bundles
            type: Directory
 ---
 kind: Deployment
