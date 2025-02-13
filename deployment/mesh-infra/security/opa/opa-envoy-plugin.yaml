@@ -41,7 +41,7 @@ spec:
           - readOnly: true
             mountPath: /tmp
             name: opa-policy
-        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/opa-policy-bundles && mc --insecure cp /tmp/basic-teadal-bundle.tar.gz rawdata/opa-policy-bundles/basic-teadal-bundle.tar.gz && mc anonymous set download rawdata/opa-policy-bundles"]
+        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/opa-policy-bundles && mc --insecure cp /tmp/teadal-policy-bundle-LATEST.tar.gz rawdata/opa-policy-bundles/teadal-policy-bundle-LATEST.tar.gz && mc anonymous set download rawdata/opa-policy-bundles"]
       volumes:
         - name: opa-policy
           secret:
@@ -79,7 +79,7 @@ spec:
           - "--addr=localhost:8181"
           - "--diagnostic-addr=0.0.0.0:8282"
           - "--set=services.default.url=http://minio.minio-operator.svc.cluster.local/"
-          - "--set=bundles.default.resource=opa-policy-bundles/basic-teadal-bundle.tar.gz"
+          - "--set=bundles.default.resource=opa-policy-bundles/teadal-policy-bundle-LATEST.tar.gz"
           - "--set=plugins.envoy_ext_authz_grpc.addr=:9191"
           - "--set=plugins.envoy_ext_authz_grpc.query=data.teadal.allow"
           - "--set=decision_logs.console=true"
