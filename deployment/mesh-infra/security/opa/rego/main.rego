@@ -8,37 +8,34 @@
 # allow rule below, you'll have to change the pod config in
 # `opa-envoy-plugin.yaml` accordingly.
 #
+#
+# ATTENTION!
+# Placeholders {{NEW_IMPORT}} and {{NEW_ALLOW}} are required by the DSPN generator tool to update the bundle. DO NOT TOUCH!
+
 package teadal
 
 import data.fdpsyncdummy.service as fdpsyncdummy
-import data.sfdpsyncdummy.service as sfdpsyncdummy
 import data.httpbin.service as httpbin
 import data.minio.service as minio
+import data.sfdpsyncdummy.service as sfdpsyncdummy
 
+import data.petstore.service as petstore
+import data.petstore.service as petstore
+#{{NEW_IMPORT}}
 
 default allow := false
 
-#allow {
-#    fdpsyncdummy.allow
-#}
-
-# or
-
-#allow {
-#    sfdpsyncdummy.allow
-#}
-
-# or
-
 allow {
-    httpbin.allow
+	httpbin.allow
 }
 
 # or
 
 allow {
-    minio.allow
+	minio.allow
 }
+
+#{{NEW_ALLOW}}
 
 # NOTE. These two policies are mutually exclusive. In fact, the
 # httpbin policy denies access if request path doesn't start with
