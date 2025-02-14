@@ -37,7 +37,7 @@ spec:
           env: 
           - name: MINIO_SERVER
             value: "teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local"          
-           - name: MINIO_ACCESS_KEY
+          - name: MINIO_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: teadal-user-1
