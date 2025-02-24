@@ -6,6 +6,7 @@ At this time, the following tools are available:
 - [Advocate](#advocate)
 - [Catalogue](#catalogue)
 - [Policy manager](#policy)
+- [AI Driven Performance Monitoring](#AI-DPM)
 
 
 If any dependencies are indicated, then it is required to configure the ArgoCD project in your Teadal Node to add the required tool.
@@ -134,6 +135,26 @@ In a browser, open the page `http://<host>/catalogue`. A login page to access to
 #### Dependencies
 
 TBD
+
+#### Preliminary steps
+
+TBD
+
+#### Tool deployment
+
+TBD
+
+#### Checking installation
+
+TBD
+
+## AI Driven Performance Monitoring <a name="AI-DPM"/>
+
+#### Dependencies
+
+- Prometheus, Thanos and Kepler
+
+See the related [page](InstallAddons.md) to know how to install the dependencies
 
 #### Preliminary steps
 
