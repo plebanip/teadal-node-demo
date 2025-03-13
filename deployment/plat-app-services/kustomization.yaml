@@ -8,6 +8,7 @@ resources:
 - httpbin/
 - catalogue/
 - dspn-webeditor
+# - ollama
 # - fdp-sync-dummy
 # - sfdp-sync-dummy
  

@@ -38,6 +38,8 @@ spec:
         - "/catalogue/*"
         - "/dspn-webeditor"
         - "/dspn-webeditor/*"
+        - "/ollama"
+        - "/ollama/*"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok/*"
         - "/css"
@@ -53,3 +55,4 @@ spec:
         - "80"
         - "8000"
         - "3000"
+        - "11434"

@@ -1,0 +1,31 @@
+metadata:
+  labels:
+    app: ollama
+  name: ollama
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      containers:
+      - image: ollama/ollama:latest
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "ollama pull granite-code:20b"]
+        name: ollama
+        ports:
+          - containerPort: 11434
+        volumeMounts:
+        - mountPath: /root/.ollama
+          name: ollama-model
+      volumes:
+      - name: ollama-model
+        persistentVolumeClaim:
+          claimName: ollama-pvc

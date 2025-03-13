@@ -110,6 +110,10 @@ spec:
               nodePort: 3000
               targetPort: 3000
               name: dspn-webeditor
+            - port: 11434
+              nodePort: 11434
+              targetPort: 11434
+              name: ollama
             - port: 31400
               targetPort: 31400
               name: tcp

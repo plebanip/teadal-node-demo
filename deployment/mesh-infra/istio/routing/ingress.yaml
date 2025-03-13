@@ -48,3 +48,10 @@ spec:
       name: dspn-webeditor
       number: 3000
       protocol: HTTP
+  - hosts:
+    - "*"
+    port:
+      name: ollama
+      number: 11434
+      protocol: HTTP
+

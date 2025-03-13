@@ -105,6 +105,18 @@ spec:
         port:
           number: 3000
   - match:
+    - uri:
+        prefix: /ollama/
+    - uri:
+        prefix: /ollama
+    rewrite:
+       uri: /
+    route:
+    - destination:
+        host: ollama.default.svc.cluster.local
+        port:
+          number: 11434
+  - match:
     - port: 9000
     route:
     - destination:

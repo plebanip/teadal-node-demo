@@ -36,6 +36,13 @@ spec:
         host: dspn-webeditor.svc.cluster.local
         port: 
           number: 3000
+  - match:
+    - port: 11434
+    route:
+    - destination:
+        host: ollama.svc.cluster.local
+        port:
+          number: 11434
   # - match: 
   #   - port: 8000
   #   route:
