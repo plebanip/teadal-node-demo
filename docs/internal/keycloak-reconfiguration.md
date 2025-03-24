@@ -15,26 +15,27 @@ Once the roles have been defined, follow these steps:
 
 3) Select "Clients" and from the list appearing on the right "admin-cli"
 
-![Select client](../images/select-admincli.png)
+<img src="../images/select-admincli.png" alt="Select client" width="70%"/>
 
 4) Select "Client scopes" panel and from the list "admin-cli-dedicated"
 
-![Select client scope](../images/select-adminclidedicated.png)
+<img src="../images/select-adminclidedicated.png" alt="Select client scope" width="70%"/>
 
 5) Select "Scope" panel 
 
-![Select client scope](../images/select-scopepanel.png)
+<img src="../images/select-scopepanel.png" alt="Select client scope" width="70%"/>
 
 6) In this panel the set of roles you want to be included in the JWT must be added. If all of them already appear, then no need to do anything. Otherwise, proceed with the next steps
 
 7) To add the roles, click on "Assign roles"
 
-<img src="../images/select-assignrole.png" alt="Select client scope" width="50%"/>
+<img src="../images/select-assignrole.png" alt="Assign roles" width="50%"/>
 
 8) Select all the roles you want to expose and click on "Assign"
 
-![Select client scope](../images/select-roles.png)
+<img src="../images/select-roles.png" alt="Select roles" width="70%"/>
 
 9) The updated list of roles should appear
 
-![Select client scope](../images/listroles.png)
+<img src="../images/listroles.png" alt="List roles" width="70%"/>
+
