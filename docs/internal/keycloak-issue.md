@@ -1,4 +1,4 @@
-If you are experiencing with key cloak issues when you moved to the new version of tidal released at the end of dec 2024, here a short guide you have to look at AFTER the fork update has succeeded.
+If you are experiencing with key cloak issues when you moved to the new version of teadal released at the end of dec 2024, here a short guide you have to look at AFTER the fork update has succeeded.
 
 This guide is required as, in the new setting, keycloak no longer uses the internal DB but uses Postgres. For this reason, Postgres is not mandatory and it has been moved from 'plat-infra' to 'mesh-infra'.
 
