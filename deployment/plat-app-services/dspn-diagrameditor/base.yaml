@@ -32,6 +32,7 @@ spec:
       containers:
         - name: dspn-diagrameditor
           image: registry.teadal.ubiwhere.com/teadal-public-images/dspn-diagrameditor:0.0.1
+          imagePullPolicy: Always
           ports:
           - containerPort: 5173
           #env: 
