@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ip-10-205-143-198-1.yaml
+- ip-10-205-143-198-2.yaml
+- ip-10-205-143-198-3.yaml
+- ip-10-205-143-198-4.yaml
+- ip-10-205-143-198-5.yaml
+- ip-10-205-143-198-6.yaml
+- ip-10-205-143-198-7.yaml
+- ip-10-205-143-198-8.yaml
+- ip-10-205-143-198-9.yaml

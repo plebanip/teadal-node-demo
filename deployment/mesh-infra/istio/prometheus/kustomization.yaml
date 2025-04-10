@@ -3,6 +3,6 @@ kind: Kustomization
 
 
 resources:
-- prometheus.yaml
-#- node-exporter-daemonset.yaml
-#- prometheus-thanos.yaml
+  #- prometheus.yaml
+- node-exporter-daemonset.yaml
+- prometheus-thanos.yaml

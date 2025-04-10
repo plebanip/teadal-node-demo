@@ -57,11 +57,7 @@ spec:
               secretKeyRef:
                 name: teadal-user-1
                 key: CONSOLE_SECRET_KEY
-        command: ["/bin/sh", "-c"]
-        args:
-          - |
-            mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $ACCESS_KEY $SECRET_KEY
-            mc mb rawdata/thanos-bucket || echo "Bucket already exist."
+        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $ACCESS_KEY $SECRET_KEY && mc mb --ignore-existing rawdata/thanos-bucket"] 
       restartPolicy: Never
   backoffLimit: 1
 
