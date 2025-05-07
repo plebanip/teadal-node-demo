@@ -1,9 +1,9 @@
 - op: replace
   path: /metadata/name
-  value: dspn-webeditor
+  value: dspn-diagrameditor
 - op: replace
   path: /spec/source/path
-  value: deployment/plat-app-services/dspn-webeditor
+  value: deployment/plat-app-services/dspn-diagrameditor
 - op: replace
   path: /spec/project
   value: plat-app-services

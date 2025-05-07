@@ -45,8 +45,8 @@ spec:
   - hosts:
     - "*"
     port:
-      name: dspn-webeditor
-      number: 3000
+      name: dspn-diagrameditor
+      number: 5173
       protocol: HTTP
   - hosts:
     - "*"

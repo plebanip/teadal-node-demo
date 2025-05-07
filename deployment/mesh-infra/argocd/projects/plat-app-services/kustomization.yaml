@@ -5,7 +5,7 @@ resources:
 - project.yaml
 - httpbin
 # - catalogue
-- dspn-webeditor
+- dspn-diagrameditor
 - opa-policy-manager
 - redis/app.yaml
 # - ollama

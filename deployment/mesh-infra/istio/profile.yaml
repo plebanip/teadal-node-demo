@@ -106,10 +106,10 @@ spec:
               nodePort: 9000
               targetPort: 9000
               name: catalogue-minio
-            - port: 3000
-              nodePort: 3000
-              targetPort: 3000
-              name: dspn-webeditor
+            - port: 5173
+              nodePort: 5173
+              targetPort: 5173
+              name: dspn-diagrameditor
             - port: 11434
               nodePort: 11434
               targetPort: 11434

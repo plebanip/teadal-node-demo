@@ -30,12 +30,12 @@ spec:
         port:
           number: 8000
   - match:
-    - port: 3000
+    - port: 5173
     route:
     - destination:
-        host: dspn-webeditor.svc.cluster.local
+        host: dspn-diagrameditor.svc.cluster.local
         port: 
-          number: 3000
+          number: 5173
   - match:
     - port: 11434
     route:

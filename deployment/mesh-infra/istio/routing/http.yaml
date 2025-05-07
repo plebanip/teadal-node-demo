@@ -106,16 +106,16 @@ spec:
           number: 9001
   - match:  # NOTE (1)
     - uri:
-        prefix: /dspn-webeditor/
+        prefix: /dspn-diagrameditor/
     - uri:
-        prefix: /dspn-webeditor
+        prefix: /dspn-diagrameditor
     #rewrite:
     #  uri: /
     route:
     - destination:
-        host: dspn-webeditor.default.svc.cluster.local
+        host: dspn-diagrameditor.default.svc.cluster.local
         port:
-          number: 3000
+          number: 5173
   - match:
     - uri:
         prefix: /ollama/
