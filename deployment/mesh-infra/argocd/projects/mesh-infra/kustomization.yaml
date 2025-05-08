@@ -12,8 +12,8 @@ resources:
 # - kiali
 - minio
 - opa
-# - prometheus
-# - thanos
+- prometheus
+- thanos
 - pvc
 - reloader
 - routing
