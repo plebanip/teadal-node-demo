@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: ai-prediction-api
-        image: registry.teadal.ubiwhere.com/teadal-public-images/ai-dpm:latest
+        image: registry.teadal.ubiwhere.com/teadal-public-images/ai-dpm:0.0.4
+        imagePullPolicy: Always
         ports:
         - containerPort: 8504
 ---
