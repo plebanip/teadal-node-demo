@@ -664,7 +664,7 @@ to the each request:
 ```bash
 $ curl -i -X DELETE localhost/httpbin/anything \
        -H "Authorization: Bearer ${jeejees_token}"
-$ curl -i -X \DELETE localhost/httpbin/anything \
+$ curl -i -X DELETE localhost/httpbin/anything \
        -H "Authorization: Bearer ${sebs_token}"
 ```
 
