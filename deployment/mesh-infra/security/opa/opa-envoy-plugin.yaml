@@ -13,41 +13,6 @@ spec:
     app: opa
 
 ---
-# inject data to minio -- instead you should already have your data or create a data store for you synthetic data or start a process to generate the data into the data store of your choice
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: add-bundle-policy-to-minio
-  namespace: minio-operator
-spec:
-  ttlSecondsAfterFinished: 100
-  template:
-    spec:
-      containers:
-      - name: mc
-        image: minio/mc:RELEASE.2023-06-23T18-12-07Z
-        env:
-          - name: MINIO_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: teadal-user-1
-                key: CONSOLE_ACCESS_KEY
-          - name: MINIO_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: teadal-user-1
-                key: CONSOLE_SECRET_KEY
-        volumeMounts:
-          - readOnly: true
-            mountPath: /tmp
-            name: opa-policy
-        command: ["sh", "-c", "mc alias set rawdata http://teadal-teadal-0.teadal-hl.minio-operator.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc mb --ignore-existing rawdata/opa-policy-bundles && mc --insecure cp /tmp/teadal-policy-bundle-LATEST.tar.gz rawdata/opa-policy-bundles/teadal-policy-bundle-LATEST.tar.gz && mc anonymous set download rawdata/opa-policy-bundles"]
-      volumes:
-        - name: opa-policy
-          secret:
-            secretName: opa-policy
-      restartPolicy: Never
----
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -66,13 +31,9 @@ spec:
     spec:
       containers:
         - name: opa
-          image: openpolicyagent/opa:0.53.1-envoy
+          image: openpolicyagent/opa:1.3.0-envoy-1
           securityContext:
             runAsUser: 1111
-          #volumeMounts:
-          #- readOnly: true
-          #  mountPath: /policy
-          #  name: opa-policy
           args:
           - "run"
           - "--server"
@@ -86,7 +47,6 @@ spec:
           - "--ignore=.*"
           - "--log-format=json-pretty"
           - "--log-level=debug"
-          #- "/policy/"
           ports:
           - containerPort: 9191
           livenessProbe:
@@ -103,7 +63,3 @@ spec:
               port: 8282
             initialDelaySeconds: 5
             periodSeconds: 5
-      #volumes:
-      #  - name: opa-policy
-      #    secret:
-      #      secretName: opa-policy

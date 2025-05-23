@@ -42,6 +42,8 @@ spec:
         - "/opa-policy-manager/*"   
         - "/ollama"
         - "/ollama/*"
+        - "/minio"
+        - "/minio/*"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok"
         - "/fkNyAxuFOr3taStQb9tUFmFKd4HepRok/*"
         - "/css"

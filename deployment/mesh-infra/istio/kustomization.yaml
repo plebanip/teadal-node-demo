@@ -5,8 +5,8 @@ resources:
 #- grafana/
 #- jaeger/
 #- kiali/
-#- prometheus/
-#- thanos/
+- prometheus/
+- thanos/
 - routing/
 #- AI_api/
 #- AI_dashboard/
