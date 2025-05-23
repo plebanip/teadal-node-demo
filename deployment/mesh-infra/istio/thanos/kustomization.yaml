@@ -12,6 +12,8 @@ resources:
 
   - ./localpath/thanos-query-deployment.yaml
 
+  - ./localpath/thanos-query-service.yaml 
+
   - ./localpath/thanos-sidecar-deployment.yaml
   
   - ./localpath/thanos-compact-deployment.yaml

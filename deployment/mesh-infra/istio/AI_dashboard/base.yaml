@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-dashboard
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-dashboard
+  template:
+    metadata:
+      labels:
+        app: ai-dashboard
+    spec:
+      containers:
+      - name: ai-dashboard
+        image: registry.teadal.ubiwhere.com/teadal-public-images/ai-dpm-dashboard:0.0.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
+        env:
+        - name: API_URL
+          value: "http://ai-prediction-api.ai-dpm.svc.cluster.local:9000"  # URL interno per comunicare con il backend API
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-dashboard
+  namespace: istio-system
+spec:
+  selector:
+    app: ai-dashboard
+  ports:
+    - protocol: TCP
+      port: 8501
+      targetPort: 8501
+  type: ClusterIP  # Usa LoadBalancer se vuoi esporlo all'esterno

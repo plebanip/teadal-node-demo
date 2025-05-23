@@ -272,6 +272,7 @@
         "containerId" : "3b667c08-f848-4337-86ae-c9f24ad5d4a2",
         "attributes" : { }
       } ],
+      "teadal-client" : [ ],
       "account" : [ {
         "id" : "ad62594c-6120-4696-8465-0da993666eb2",
         "name" : "view-profile",
@@ -391,6 +392,20 @@
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
   "webAuthnPolicyPasswordlessExtraOrigins" : [ ],
   "users" : [ {
+    "id" : "16a64f0c-7b4d-4840-a226-be66def3df6b",
+    "createdTimestamp" : 1739206825659,
+    "username" : "doctor",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "email" : "doctor@ribera.es",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-teadal" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "1e811923-9be5-4729-a809-d306df1efd28",
     "createdTimestamp" : 1696871108976,
     "username" : "jeejee",
@@ -433,7 +448,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "doctors", "default-roles-teadal" ],
+    "realmRoles" : [ "default-roles-teadal", "doctors" ],
     "notBefore" : 0,
     "groups" : [ ]
   } ],
@@ -647,6 +662,41 @@
         "jsonType.label" : "String"
       }
     } ],
+    "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+  }, {
+    "id" : "095def8d-a89d-46ba-920b-df6c0926c6fc",
+    "clientId" : "teadal-client",
+    "name" : "",
+    "description" : "",
+    "rootUrl" : "",
+    "adminUrl" : "",
+    "baseUrl" : "",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : true,
+    "clientAuthenticatorType" : "client-secret",
+    "redirectUris" : [ "/*" ],
+    "webOrigins" : [ "/*" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : true,
+    "serviceAccountsEnabled" : false,
+    "publicClient" : true,
+    "frontchannelLogout" : true,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "oidc.ciba.grant.enabled" : "false",
+      "oauth2.device.authorization.grant.enabled" : "false",
+      "backchannel.logout.session.required" : "true",
+      "backchannel.logout.revoke.offline.tokens" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
     "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   } ],
@@ -888,7 +938,7 @@
     "description" : "OpenID Connect scope for add user roles to the access token",
     "protocol" : "openid-connect",
     "attributes" : {
-      "include.in.token.scope" : "false",
+      "include.in.token.scope" : "true",
       "display.on.consent.screen" : "true",
       "consent.screen.text" : "${rolesScopeConsentText}"
     },

@@ -1,6 +1,7 @@
 deployment/mesh-infra/istio/temp-ingress.yml
 deployment/mesh-infra/istio/temp-minimal-op.yml
 deployment/mesh-infra/istio/thanos/.gitignore
+deployment/mesh-infra/storage/pv/local/ip-10-205-143-198/
 nix/argocd
 nix/argocd.1
 nix/index.html

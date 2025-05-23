@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-prediction-api
+  namespace: istio-system 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-prediction-api
+  template:
+    metadata:
+      labels:
+        app: ai-prediction-api
+    spec:
+      containers:
+      - name: ai-prediction-api
+        image: registry.teadal.ubiwhere.com/teadal-public-images/ai-dpm:0.0.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8504
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-prediction-api
+  namespace:  istio-system
+spec:
+  selector:
+    app: ai-prediction-api
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 8504

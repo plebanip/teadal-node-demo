@@ -12,7 +12,7 @@ resources:
 # - kiali
 - minio
 - opa
-# - prometheus
+# - prometheus
 # - thanos
 - pvc
 - reloader
