@@ -657,19 +657,19 @@ examples below, you'll have to get fresh tokens again.
 
 Both product owner and consumer are allowed to read a URL path like
 `/httpbin/anything`. So both users, `jeejee@teadal.eu` (owner)
-and `sebs@teadal.eu` (consumer), should be able to do a `DELETE` and get
+and `sebs@teadal.eu` (consumer), should be able to do a `GET` and get
 back (pun intended) a `200`, provided we attach their respective JWT
 to the each request:
 
 ```bash
-$ curl -i -X DELETE localhost/httpbin/anything \
+$ curl -i -X GET localhost/httpbin/anything \
        -H "Authorization: Bearer ${jeejees_token}"
-$ curl -i -X DELETE localhost/httpbin/anything \
+$ curl -i -X GET localhost/httpbin/anything \
        -H "Authorization: Bearer ${sebs_token}"
 ```
 
 But, as a product owner, `jeejee@teadal.eu` should be able to do
-anything he fancies to the above path, like `GET`, whereas
+anything he fancies to the above path, like `DELETE`, whereas
 `sebs@teadal.eu`, as a consumer, should not.
 
 ```bash
