@@ -148,22 +148,64 @@ TBD
 
 TBD
 
+
+
 ## AI Driven Performance Monitoring <a name="AI-DPM"/>
+
+The AI-DPM tool is composed of two distinct but interdependent components:
+	•	AI_api: the backend service responsible for fetching and processing telemetry data using ML models
+	•	AI_dashboard: the frontend dashboard used to visualize predictions and interact with the models
+
+Both components must be installed together to ensure full functionality.
+
 
 #### Dependencies
 
-- Prometheus, Thanos and Kepler
-
-See the related [page](InstallAddons.md) to know how to install the dependencies
-
-#### Preliminary steps
-
-TBD
+To work correctly, the following dependencies must also be enabled and running:
+	•	Prometheus (for metrics ingestion)
+	•	Thanos (for long-term metrics storage and query)
+	•	Kepler (for power-related telemetry collection)
 
 #### Tool deployment
 
-TBD
+Be sure that, in the repo, the Istio Kustomization file includes the following resources uncommented:
+
+```bash
+resources:
+  - ai-dashboard
+  - ai-prediction-api
+  - prometheus
+  - kepler
+  - thanos
+```
+
+Once the above lines are enabled, apply the configuration by running the following command:
+
+```bash
+kustomize build deployment/mesh-infra/istio | kubectl apply -f -
+```
+
+This will deploy the AI components as well as the required telemetry infrastructure into the istio-system namespace.
 
 #### Checking installation
 
-TBD
+You can verify that all pods are running with:
+
+```bash
+kubectl get pods -n istio-system | grep ai-
+```
+
+#### To access the AI dashboard:
+
+```bash
+kubectl port-forward svc/ai-dashboard 8501:8501 -n istio-system
+```
+
+Then open your browser at http://localhost:8501
+
+#### To test the prediction API (optional, for debugging):
+
+```bash
+kubectl port-forward svc/ai-prediction-api 9000:9000 -n istio-system
+curl http://localhost:9000/fetch
+```
