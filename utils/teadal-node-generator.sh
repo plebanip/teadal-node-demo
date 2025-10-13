@@ -15,7 +15,8 @@ usage() {
 main() {
     parse_options "$@"
     log "Script started with options:\n\trepo_dir=$repo_dir\n\trepo_url=$repo_url\n\tbranch=$branch"
-    # exit 0 # uncomment for testing
+    setup_microk8s
+    # exit 0 # TODO: comment before commit until fully tested
 }
 
 ### Utilities scripts
@@ -25,15 +26,17 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 TEADAL_LOG_DIR="${TEADAL_LOG_DIR:-/tmp}"
+logfile="$TEADAL_LOG_DIR/install-teadal.log"
 
-log() { echo "${GREEN}[INFO]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$TEADAL_LOG_DIR"/install-teadal.log; }
-error() { echo "${RED}[ERROR]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$TEADAL_LOG_DIR"/install-teadal.log >&2; }
+log() { echo "${GREEN}[INFO]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a $logfile; }
+error() { echo "${RED}[ERROR]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a $logfile >&2; }
 
 # Global variables
-repo_dir="$(pwd)"                                # Directory with the repo clone
-repo_url="$(git config --get remote.origin.url)" # Url of the repo
-branch=""                                        # Branch of the repo
-hostname_dir=""                                  # Directory with generated storage pv
+repo_dir="$(pwd)" # Directory with the repo clone
+repo_url="$(git config --get remote.origin.url 2>/dev/null || echo '')"
+# Url of the repo
+branch=""       # Branch of the repo
+hostname_dir="" # Directory with generated storage pv
 
 parse_options() {
     while getopts "d:u:b:h" opt; do
@@ -58,30 +61,32 @@ parse_options() {
     fi
 }
 
+setup_microk8s() {
+    log "Setting up microk8s..."
+
+    # If microk8s is not installed install it
+    if ! command -v microk8s &>/dev/null; then
+        sudo snap install microk8s --classic --channel=1.27/stable || error "Failed to install microk8s."
+    fi
+
+    # Setup permissions
+    sudo usermod -a -G microk8s $USER
+    mkdir -p ~/.kube
+    chmod 0700 ~/.kube
+    # Setup addons
+    log "Waiting for microk8s to be ready..."
+    sudo microk8s status --wait-ready &>/dev/null || error "microk8s is not ready."
+    log "Enabling microk8s addons (it may take a while)..."
+    sudo microk8s enable dns &>/dev/null || error "Failed to enable dns."
+    sudo microk8s disable ha-cluster --force &>/dev/null || error "Failed to disable ha-cluster."
+    sudo microk8s config >~/.kube/config
+    export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
+    log "Waiting for microk8s to be ready after enabling addons..."
+    sudo microk8s status --wait-ready
+    log "microk8s is ready."
+}
+
 main "$@"
-
-log "Setup microk8s"
-
-echo "sudo snap install microk8s --classic --channel=1.27/stable"
-sudo snap install microk8s --classic --channel=1.27/stable
-
-echo "sudo usermod -a -G microk8s $(whoami)"
-sudo usermod -a -G microk8s $(whoami) 2>error.log
-
-sudo newgrp microk8s <<MYGRP
-echo "newgrp microk8s"
-MYGRP
-
-echo "microk8s status --wait-ready"
-microk8s status --wait-ready
-
-echo "### microk8s installed ###"
-
-echo "### configuring microk8s ###"
-
-microk8s disable ha-cluster --force
-microk8s enable dns
-microk8s status
 
 # change the kube-apiserver ports
 file="/var/snap/microk8s/current/args/kube-apiserver"
