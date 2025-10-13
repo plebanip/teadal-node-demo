@@ -14,12 +14,11 @@ usage() {
 
 # check pre-requisites
 if [ -z "$HOSTNAME" ]; then
-   echo "$HOSTNAME variable not defined"
-   exit1
-else 
-   echo "installing Teadal node in $HOSTNAME"
+    echo "$HOSTNAME variable not defined"
+    exit1
+else
+    echo "installing Teadal node in $HOSTNAME"
 fi
-
 
 # Initialize variables
 repo_dir=""
@@ -30,26 +29,24 @@ hostname_dir=""
 # Parse command-line options
 while getopts ":d:r:b:h" opt; do
     case "$opt" in
-        d)
-            repo_dir="$OPTARG"
-            ;;
-        r)
-            repo_url="$OPTARG"
-            ;;
-        b)
-            branch="$OPTARG"
-            ;;
-        h)
-            usage
-            ;;
-        ?)
-            echo "Invalid option: -$OPTARG" >&2
-            usage
-            ;;
+    d)
+        repo_dir="$OPTARG"
+        ;;
+    r)
+        repo_url="$OPTARG"
+        ;;
+    b)
+        branch="$OPTARG"
+        ;;
+    h)
+        usage
+        ;;
+    ?)
+        echo "Invalid option: -$OPTARG" >&2
+        usage
+        ;;
     esac
 done
-
-
 
 # Check if the mandatory parameter (-d) is provided
 if [ -z "$repo_dir" ]; then
@@ -69,9 +66,9 @@ echo "sudo snap install microk8s --classic --channel=1.27/stable"
 sudo snap install microk8s --classic --channel=1.27/stable
 
 echo "sudo usermod -a -G microk8s $(whoami)"
-sudo usermod -a -G microk8s $(whoami) 2> error.log
+sudo usermod -a -G microk8s $(whoami) 2>error.log
 
-sudo newgrp microk8s << MYGRP
+sudo newgrp microk8s <<MYGRP
 echo "newgrp microk8s"
 MYGRP
 
@@ -101,24 +98,23 @@ fi
 if grep -q "$substring" "$file"; then
     sed -i.bak "s/^$substring.*/$replacement/" "$file" && rm "$file".bak
 else
-    echo "$replacement" >> "$file"    
+    echo "$replacement" >>"$file"
 fi
 
 microk8s stop
 microk8s start
 
 export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
-microk8s config > ~/.kube/config
+microk8s config >~/.kube/config
 kubectl get pod -A
 echo "### microk8s configured ###"
-
 
 echo "setting up microk8s storage"
 
 sudo mkdir -p /mnt/data/d{1..10}
 sudo chmod -R 777 /mnt/data
 node.config -microk8s pv 1:20 8:10
-hostname_dir=`echo "$HOSTNAME" | tr '[:upper:]' '[:lower:]'`
+hostname_dir=$(echo "$HOSTNAME" | tr '[:upper:]' '[:lower:]')
 echo "pippo"
 echo "$hostname_dir"
 mv "$hostname_dir" "$repo_dir"/deployment/mesh-infra/storage/pv/local/
@@ -127,7 +123,7 @@ mv "$hostname_dir" "$repo_dir"/deployment/mesh-infra/storage/pv/local/
 file="$repo_dir""/deployment/mesh-infra/storage/pv/local/kustomization.yaml"
 kustomizationfile_dir="$repo_dir""/deployment/mesh-infra/storage/pv/local/"
 substring="\- <HOST_NAME>"
-replacement=`echo "-" $hostname_dir`
+replacement=$(echo "-" $hostname_dir)
 
 # Check if the file exists
 if [ ! -f "$file" ]; then
@@ -139,14 +135,13 @@ fi
 if grep -q "$substring" "$file"; then
     sed -i.bak "s/^$substring.*/$replacement/" "$file" && rm "$file".bak
 else
-    substring=`echo "\-" "$hostname_dir"`
+    substring=$(echo "\-" "$hostname_dir")
     if grep -q "$substring" "$file"; then
         echo "folder already included in the  kustomizationfile"
     else
-        echo "$replacement" >> "$file"
+        echo "$replacement" >>"$file"
     fi
 fi
-
 
 kustomize build "$kustomizationfile_dir" | kubectl apply -f -
 
@@ -165,11 +160,10 @@ echo "istio installed"
 
 echo "installing ArgoCD"
 
-
 # change the kustomizefile for argocd repo
 file="$repo_dir""/deployment/mesh-infra/argocd/projects/base/app.yaml"
 substring="repoURL"
-replacement=`echo "    repoURL:" "$repo_url"`
+replacement=$(echo "    repoURL:" "$repo_url")
 
 # Check if the file exists
 if [ ! -f "$file" ]; then
@@ -182,7 +176,7 @@ if grep -q "$substring" "$file"; then
     sed -i.bak "s/^$substring.*/$replacement/" "$file" && rm "$file".bak
     echo "$file" " updated with " "$replacement"
 else
-    echo "Error the repoURL field does not exist"    
+    echo "Error the repoURL field does not exist"
 fi
 
 if [ -z "$branch"]; then
@@ -199,10 +193,10 @@ if [ -z "$branch"]; then
     fi
 fi
 
-kustomize build `echo "$repo_dir""/deployment/mesh-infra/argocd"` | kubectl apply -f -
+kustomize build $(echo "$repo_dir""/deployment/mesh-infra/argocd") | kubectl apply -f -
 
 #try twice
-kustomize build `echo "$repo_dir""/deployment/mesh-infra/argocd"` | kubectl apply -f -
+kustomize build $(echo "$repo_dir""/deployment/mesh-infra/argocd") | kubectl apply -f -
 
 kubectl get pod -A
 
