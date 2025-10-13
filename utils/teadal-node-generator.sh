@@ -1,66 +1,66 @@
 #!/bin/bash
+set -euo pipefail
 
 # Function to display usage information
 usage() {
-    echo "Usage: $0 [OPTIONS] repoURL"
-    echo "Mandatory parameters:"
+    echo "Usage: $0 [OPTIONS]"
+    echo "Mandatory options:"
     echo "  -d <repo_dir>     Specify the directory with the repo clone"
     echo "  -r <repo_url>     Specify the repoURL"
     echo "Options:"
     echo "  -b <branch>       Specify a branch"
     echo "  -h                Display this help message"
-    exit 1
 }
 
-# check pre-requisites
-if [ -z "$HOSTNAME" ]; then
-    echo "$HOSTNAME variable not defined"
-    exit1
-else
-    echo "installing Teadal node in $HOSTNAME"
-fi
+main() {
+    parse_options "$@"
+    log "Script started with options:\n\trepo_dir=$repo_dir\n\trepo_url=$repo_url\n\tbranch=$branch"
+    # exit 0 # uncomment for testing
+}
 
-# Initialize variables
-repo_dir=""
-repo_url=""
-branch=""
-hostname_dir=""
+### Utilities scripts
+# Colors and logging functions
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
 
-# Parse command-line options
-while getopts ":d:r:b:h" opt; do
-    case "$opt" in
-    d)
-        repo_dir="$OPTARG"
-        ;;
-    r)
-        repo_url="$OPTARG"
-        ;;
-    b)
-        branch="$OPTARG"
-        ;;
-    h)
-        usage
-        ;;
-    ?)
-        echo "Invalid option: -$OPTARG" >&2
-        usage
-        ;;
-    esac
-done
+TEADAL_LOG_DIR="${TEADAL_LOG_DIR:-/tmp}"
 
-# Check if the mandatory parameter (-d) is provided
-if [ -z "$repo_dir" ]; then
-    echo "Error: The -d <repo_dir> parameter is mandatory." >&2
-    usage
-fi
+log() { echo "${GREEN}[INFO]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$TEADAL_LOG_DIR"/install-teadal.log; }
+error() { echo "${RED}[ERROR]${NC}$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$TEADAL_LOG_DIR"/install-teadal.log >&2; }
 
-# Check if the mandatory parameter (-r) is provided
-if [ -z "$repo_url" ]; then
-    echo "Error: The -r <repo_url> parameter is mandatory." >&2
-    usage
-fi
+# Global variables
+repo_dir="$(pwd)"                                # Directory with the repo clone
+repo_url="$(git config --get remote.origin.url)" # Url of the repo
+branch=""                                        # Branch of the repo
+hostname_dir=""                                  # Directory with generated storage pv
 
-echo "### installing microk8s ###"
+parse_options() {
+    while getopts "d:u:b:h" opt; do
+        case $opt in
+        d) repo_dir="$OPTARG" ;;
+        u) repo_url="$OPTARG" ;;
+        b) branch="$OPTARG" ;;
+        h)
+            usage
+            exit 0
+            ;;
+        ?)
+            error "Invalid option: $OPTARG"
+            exit 1
+            ;;
+        esac
+    done
+
+    if [ -z "$HOSTNAME" ]; then
+        error "HOSTNAME variable not defined"
+        exit 1
+    fi
+}
+
+main "$@"
+
+log "Setup microk8s"
 
 echo "sudo snap install microk8s --classic --channel=1.27/stable"
 sudo snap install microk8s --classic --channel=1.27/stable
