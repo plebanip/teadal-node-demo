@@ -67,20 +67,6 @@ it should return something like ``argocd: v2.7.6``
 
 Now all the command must be executed inside the Nix shell.
 
-## Quick installation <a name="quick-installation"/>
-
-If you want to quickly install the Teadal node from scratch, after setting up the machine with the instructions described before, there is `tedal-node-generator.sh` script.
-
-```bash
-Usage: ./teadal-node-generator.sh [OPTIONS] repoURL
-Mandatory parameters:
-  -d <repo_dir>     Specify the directory with the repo clone
-  -r <repo_url>     Specify the repoURL
-Options:
-  -b <branch>       Specify a branch
-  -h                Display this help message
-```
-
 ## Step-by-step installation <a name="stepbystep-installation"/>
 
 If you want to install all the components manually, here after the complete set of commands.

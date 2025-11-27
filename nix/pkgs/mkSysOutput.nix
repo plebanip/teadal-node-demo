@@ -35,17 +35,23 @@ let
   node-config = sysPkgs.callPackage ./node-config/pkg.nix { };
   pvlocalgen = sysPkgs.callPackage ./pvlocalgen/pkg.nix { };
 
+  #teadal-deployment = sysPkgs.callPackage ./teadal-deployment/pkg.nix { };
+
+  teadal-deployment = import ./teadal-deployment/pkg.nix { inherit sysPkgs; };
+
   tools = sysPkgs.callPackage ./cli-tools/pkg.nix {
-    inherit kubectl-directpv kubectl-minio opa-envoy-plugin node-config pvlocalgen;
+    inherit kubectl-directpv kubectl-minio opa-envoy-plugin node-config pvlocalgen teadal-deployment;
   };
 
 in rec {
   packages.${system} =
     tools.shared // (if isLinux then tools.linux else {}) //
     { inherit kubectl-directpv kubectl-minio
-              opa-envoy-plugin opa-envoy-plugin-img node-config pvlocalgen;
+              opa-envoy-plugin opa-envoy-plugin-img node-config pvlocalgen teadal-deployment;
     };
   defaultPackage.${system} = tools.shared.cli-tools-dev-shell;
+
+
 }
 # NOTE
 # ----

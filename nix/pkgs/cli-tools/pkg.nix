@@ -13,6 +13,7 @@
 
   kubectl-directpv, kubectl-minio, minio-client,
   opa-envoy-plugin,
+  teadal-deployment,
   node-config, pvlocalgen, go
 }:
 
@@ -60,6 +61,7 @@ rec {
     nixos-rebuild
     node-config
     pvlocalgen
+    teadal-deployment
     go                # 1.20.4   (pkgs = nixos-23.05)
   ] ++ node-cloud;
 
