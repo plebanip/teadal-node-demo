@@ -90,6 +90,8 @@ setup_microk8s() {
             log "kubectl not found, aliasing it to microk8s.kubectl"
             sudo snap alias microk8s.kubectl kubectl || error_exit "Failed to alias kubectl."
         fi
+        sudo microk8s disable ha-cluster --force
+        sudo microk8s enable dns
         log "Setup microk8s completed."        
         #exec sg microk8s "$0 $*"
         #newgrp microk8s       
