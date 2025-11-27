@@ -69,7 +69,7 @@ else
   read -p "Do you want to lauch Teadal from the existing repo? (y/n): " answer
 
     case "$answer" in
-        y|Y ) echo "Continuing..."; cd "${repo_dir}"/nix; nix run .#teadal-deployment || error "Failed to install Teadal node" ;;
+        y|Y ) echo "Continuing..."; cd "${repo_dir}"/nix; nix run .#teadal-deployment || error "Failed to install Teadal node"; exit 1 ;;
         n|N ) echo "Aborting."; exit 1 ;;
         * ) echo "Invalid answer. Aborting."; exit 1 ;;
     esac
