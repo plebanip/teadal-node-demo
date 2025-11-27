@@ -22,6 +22,18 @@ In addition to these tools, TEADAL project is providing advanced tools to enable
 
 We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
 
-To deploy a TEADAL node follow this [Teadal Node Installation guide](docs/InstallTeadalNode.md)
+## Quick installation
+1) Fork this repo 
+2) Download the [installation file](utils/install-teadal.sh)
+3) Make the file executable `sudo chmod 777 install-teadal.sh`
+4) Run the installation file `./install-teadal.sh -u <git repo url> [-b <branch name> -d <download dir>]`
+where:
+    - `<git repo url>` is the URL of the forked repo
+    - `<branch name>` the branch of the repo, (default: `HEAD`)
+    - `<download dir>` directory where the repo is cloned (default: `./teadal.node`)  
 
-To add a TEADAL node follow [Teadal Tool Installation guide](docs/InstallTeadalTools.md)
+## Detailed installation procedure
+Additional information about the installation process is available in the [Teadal Node Installation guide](docs/InstallTeadalNode.md)
+
+## TEADAL node configuration
+To add a TEADAL tools follow [Teadal Tool Installation guide](docs/InstallTeadalTools.md)
