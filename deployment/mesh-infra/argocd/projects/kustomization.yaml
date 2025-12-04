@@ -5,4 +5,4 @@ resources:
 - mesh-infra
 - plat-infra-services
 - plat-app-services
-#-pilot-services
+- pilot-services

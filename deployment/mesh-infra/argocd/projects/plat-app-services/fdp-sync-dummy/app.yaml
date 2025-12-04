@@ -1,9 +1,0 @@
-- op: replace
-  path: /metadata/name
-  value: fdp-sync-dummy
-- op: replace
-  path: /spec/source/path
-  value: deployment/plat-app-services/fdp-sync-dummy
-- op: replace
-  path: /spec/project
-  value: plat-app-services

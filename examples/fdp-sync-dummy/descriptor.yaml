@@ -1,0 +1,8 @@
+fdp-descriptor:
+  name: fdp-sync-dummy
+  version: 1.0.0
+  description: >
+    FDP descriptor used to test
+
+  deployment: base.yaml      
+  

@@ -9,5 +9,3 @@ resources:
 - opa-policy-manager
 # - redis/app.yaml
 # - ollama
-# - fdp-sync-dummy
-# - sfdp-sync-dummy
