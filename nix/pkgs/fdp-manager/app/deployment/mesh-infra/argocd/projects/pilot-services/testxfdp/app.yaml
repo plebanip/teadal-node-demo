@@ -1,9 +1,0 @@
-- op: replace
-  path: /metadata/name
-  value: testxfdp
-- op: replace
-  path: /spec/source/path
-  value: deployment/pilot-services/testxfdp
-- op: replace
-  path: /spec/project
-  value: pilot-services
