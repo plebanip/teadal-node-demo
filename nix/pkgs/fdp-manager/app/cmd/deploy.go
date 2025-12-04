@@ -81,7 +81,7 @@ func runDeploy(yamlDescriptorFile string) error {
 	}
 
 	// Check if directory already exists for ArgoCD
-	pilotServicesArgoCDDir := Config.Paths.ArgoCD
+	pilotServicesArgoCDDir := filepath.Join(Config.Paths.Node, Config.Paths.ArgoCD)
 	fdpArgoCDDir := filepath.Join(pilotServicesArgoCDDir, fdpName)
 
 	if _, err := os.Stat(fdpArgoCDDir); err == nil {
@@ -89,7 +89,7 @@ func runDeploy(yamlDescriptorFile string) error {
 	}
 
 	// Check if directory already exists for Microk8s
-	pilotServicesK8SDir := Config.Paths.MicroK8S
+	pilotServicesK8SDir := filepath.Join(Config.Paths.Node, Config.Paths.MicroK8S)
 	fdpK8SDir := filepath.Join(pilotServicesK8SDir, fdpName)
 
 	if _, err := os.Stat(fdpK8SDir); err == nil {
