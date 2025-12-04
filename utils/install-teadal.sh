@@ -5,7 +5,7 @@ set -euo pipefail
 usage() {
     echo "Usage: $0 [OPTIONS]"
     echo "Mandatory options:"
-    echo "  -r <repo_url>     Specify the repoURL"
+    echo "  -u <repo_url>     Specify the repoURL"
     echo "Options:"
     echo "  -d <repo_dir>     Specify the directory where to clone the repo (default:teadal.node)"
     echo "  -b <branch>       Specify a branch (default: HEAD)"
@@ -36,7 +36,7 @@ done
 
 # Check mandatory arguments
 if [[ -z "$repo_url" ]]; then
-    echo "Error: -r <repo> are required"
+    echo "Error: -u <repo> are required"
     exit 1
 fi
 
