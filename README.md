@@ -34,8 +34,34 @@ where:
 
 [*] We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
 
-## Detailed installation procedure
+### Detailed installation procedure
 Additional information about the installation process is available in the [Teadal Node Installation guide](docs/InstallTeadalNode.md)
 
-## TEADAL node configuration
+### TEADAL node configuration
 To add a TEADAL tools follow [Teadal Tool Installation guide](docs/InstallTeadalTools.md)
+
+## Adding an FDP
+
+A Federated Data Product is defined by its descriptor which has the following format
+
+```yaml
+fdp-descriptor:
+  name: <name_of_the_FDP>
+  version: 1.0.0
+  description: >
+    FDP descriptor used to test
+
+  deployment: microk8s_deployment.yaml      
+  resources:
+  - additional.yaml      
+```
+The `microk8s_deployment` file follows the format required by microk8s. An example is [here](/deployment/plat-app-services/httpbin/base.yaml). In case the deployment file requires additional files they can be defined in the `resources` list 
+
+Having the descriptor execute the following commands:
+
+```bash
+cd <download dir>/nix/pkgs/fdp-manager
+nix run .#fdp-manager deploy <descriptorfile>
+```
+
+For additional information about the FDP-manager refer to the [related project](https://gitlab.teadal.ubiwhere.com/teadal-tech/fdp-manager)
