@@ -20,17 +20,19 @@ In addition to these tools, TEADAL project is providing advanced tools to enable
 * Policy manager
 * Pipeline generator
 
-We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
+
 
 ## Quick installation
 1) Fork this repo 
-2) Download the [installation file](utils/install-teadal.sh)
-3) Make the file executable `sudo chmod 777 install-teadal.sh`
+2) Download the [installation file](utils/install-teadal.sh) on your machine [*]
+3) Make the file installation file executable `sudo chmod 777 install-teadal.sh`
 4) Run the installation file `./install-teadal.sh -u <git repo url> [-b <branch name> -d <download dir>]`
 where:
     - `<git repo url>` is the URL of the forked repo
     - `<branch name>` the branch of the repo, (default: `HEAD`)
     - `<download dir>` directory where the repo is cloned (default: `./teadal.node`)  
+
+[*] We recommend to deploy a TEADAL node on a machine with 8 cores, 32 GB memory, 100GB storage. Depending on the TEADAL tools installed less or more than these resources could be required.
 
 ## Detailed installation procedure
 Additional information about the installation process is available in the [Teadal Node Installation guide](docs/InstallTeadalNode.md)
