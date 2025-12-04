@@ -7,7 +7,7 @@ spec:
   project: mesh-infra
   source:
     repoURL: https://gitlab.teadal.ubiwhere.com/teadal-tech/teadal.node.git
-    targetRevision: feature/improve-node-generator
+    targetRevision: HEAD
     path: deployment/mesh-infra/app
   destination:
     server: https://kubernetes.default.svc
