@@ -79,8 +79,8 @@ setup_microk8s() {
         sudo cp "$repo_dir/utils/microk8s-config.yaml" /var/snap/microk8s/common/.microk8s.yaml || error_exit "Failed to copy microk8s configuration file."
         sudo snap install microk8s --classic --channel=1.27/stable || error_exit "Failed to install microk8s."
         sudo usermod -a -G microk8s "$USER"
-        #mkdir -p ~/.kube
-        #chmod 0700 ~/.kube
+        mkdir -p ~/.kube
+        chmod 0700 ~/.kube
         log "User $USER added to microk8s group. You may need to log out and log back in for this to take effect."
         log "Waiting for microk8s to be ready..."
         sudo microk8s status --wait-ready &>/dev/null || error_exit "microk8s is not ready."
