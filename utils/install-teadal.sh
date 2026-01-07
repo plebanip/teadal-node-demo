@@ -102,19 +102,25 @@ if ! command -v nix &>/dev/null; then
 
     #check the installation
     nix --version || error "Nix installation failed."
+
+    #ask to exit from the shell and re-enter
+    log "To make nix properly running you need to logout from the terminal and re-connent"
+    log "Then re-run the TEADAL install procedure with"
+    log "install-teadal.sh -u <repo_url>"
+    log "say 'yes' to use the same directory"
 else
     log "Nix is already installed."
     # Be sure that flakes is supportedd
     mkdir -p ~/.config/nix
     echo "experimental-features = nix-command flakes" >~/.config/nix/nix.conf
+
+    log "Starting teadal node generation in nix environment..."
+    log "Ready to install TEADAL node"
+    cd nix
+    nix run .#teadal-deployment || error "Failed to install Teadal node"
+
+    log "TEADAL node installed"
+    log "To use Teadal operate via nix"
+    log "e.g.: firstly open a nix shell 'nix shell'"
+    log "      then  look at the current configuration 'kubectl get pod -A'"
 fi
-
-log "Starting teadal node generation in nix environment..."
-log "Ready to install TEADAL node"
-cd nix
-nix run .#teadal-deployment || error "Failed to install Teadal node"
-
-log "TEADAL node installed"
-log "To use Teadal operate via nix"
-log "e.g.: firstly open a nix shell 'nix shell'"
-log "      then  look at the current configuration 'kubectl get pod -A'"
