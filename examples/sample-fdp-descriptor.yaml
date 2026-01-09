@@ -1,0 +1,8 @@
+fdp-descriptor:
+  name: samplefdp
+  version: 1.0.0
+  description: >
+    FDP  used to show the policy manager
+
+  deployment: samplefdp-deployment.yaml      
+  resources:
