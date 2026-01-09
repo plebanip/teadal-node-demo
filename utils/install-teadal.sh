@@ -98,7 +98,7 @@ if ! command -v nix &>/dev/null; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
     fi
     # update the env variables required to run nix
-    . /home/teadal/.nix-profile/etc/profile.d/nix.sh
+    . ~/.nix-profile/etc/profile.d/nix.sh
 
     #check the installation
     nix --version || error "Nix installation failed."
