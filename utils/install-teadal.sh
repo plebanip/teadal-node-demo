@@ -116,12 +116,14 @@ else
 
     log "Starting teadal node generation in nix environment..."
     log "Ready to install TEADAL node"
-    cd nix
-    nix shell
-    nix run .#teadal-deployment || error "Failed to install Teadal node"
+    log "To install the actual TEADAL node execute the followinf commands: "
+    log "  cd nix"
+    log "  nix shell"
+    log "  nix run .#teadal-deployment"
+    #nix run .#teadal-deployment || error "Failed to install Teadal node"
 
-    log "TEADAL node installed"
-    log "To use Teadal operate via nix"
+    #log "TEADAL node installed"
+    log "Once installted rememeber that to use Teadal you have to operate via nix"
     log "e.g.: firstly open a nix shell 'nix shell'"
     log "      then  look at the current configuration 'kubectl get pod -A'"
 fi
