@@ -1,4 +1,4 @@
 paths:
-  node: "/home/ubuntu/teadal.node"
+  node: "/home/teadal/teadal.node"
   argocd: "deployment/mesh-infra/argocd/projects/pilot-services"
   microk8s: "deployment/pilot-services"

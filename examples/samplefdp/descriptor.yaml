@@ -4,5 +4,4 @@ fdp-descriptor:
   description: >
     FDP  used to show the policy manager
 
-  deployment: samplefdp-deployment.yaml      
-  resources:
+  deployment: base.yaml
