@@ -7,7 +7,7 @@ commonLabels:
 resources:
 - httpbin/
 - catalogue/
-- dspn-diagrameditor
+# - dspn-diagrameditor
 - opa-policy-manager
 # - redis
 # - ollama
